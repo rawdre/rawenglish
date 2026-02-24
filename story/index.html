@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            width: 1080px;
+            height: 1920px;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(160deg, #0f2840 0%, #1a3a5c 40%, #2d7dd2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative circles */
+        .circle1 {
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(126, 200, 70, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .circle2 {
+            position: absolute;
+            bottom: -150px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(45, 125, 210, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .circle3 {
+            position: absolute;
+            top: 40%;
+            left: -200px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(126, 200, 70, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 80px 70px;
+            width: 100%;
+        }
+
+        .flags {
+            font-size: 72px;
+            margin-bottom: 40px;
+            letter-spacing: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(126, 200, 70, 0.2);
+            color: #7ec846;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+            border: 1px solid rgba(126, 200, 70, 0.3);
+        }
+
+        h1 {
+            font-size: 82px;
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+
+        h1 em {
+            color: #7ec846;
+            font-style: normal;
+        }
+
+        .subtitle {
+            font-size: 36px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            margin-bottom: 60px;
+        }
+
+        .features {
+            text-align: left;
+            margin: 0 auto 70px;
+            max-width: 750px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 22px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 34px;
+            font-weight: 500;
+        }
+
+        .feature .icon {
+            font-size: 42px;
+            width: 60px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .cta-box {
+            background: #7ec846;
+            padding: 35px 60px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+
+        .cta-box .label {
+            font-size: 26px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .cta-box .url {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .swipe {
+            font-size: 30px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 30px;
+            font-weight: 500;
+        }
+
+        .swipe span {
+            font-size: 36px;
+            vertical-align: middle;
+        }
+
+        .logo-area {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            z-index: 2;
+        }
+
+        .logo-area em {
+            color: #7ec846;
+            font-style: normal;
+        }
+
+        .bottom-bar {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .handle {
+            font-size: 30px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="circle1"></div>
+    <div class="circle2"></div>
+    <div class="circle3"></div>
+
+    <div class="logo-area">Raw<em>English</em> ✦</div>
+
+    <div class="content">
+        <div class="flags">🇧🇷 ➡️ 🇺🇸</div>
+        
+        <div class="badge">Treinamento de Inglês</div>
+
+        <h1>Fale inglês<br>com <em>confiança</em></h1>
+
+        <p class="subtitle">Professor com 18+ anos nos EUA<br>+ Tutor de IA disponível 24/7</p>
+
+        <div class="features">
+            <div class="feature">
+                <span class="icon">🎯</span>
+                <span>Aulas ao vivo — individual ou grupo</span>
+            </div>
+            <div class="feature">
+                <span class="icon">🤖</span>
+                <span>Tutor de IA pra praticar 24h</span>
+            </div>
+            <div class="feature">
+                <span class="icon">💼</span>
+                <span>Inglês pra negócios e reuniões</span>
+            </div>
+            <div class="feature">
+                <span class="icon">📝</span>
+                <span>Teste de nível GRÁTIS</span>
+            </div>
+        </div>
+
+        <div class="cta-box">
+            <div class="label">ACESSE AGORA 👇</div>
+            <div class="url">rawdre.github.io/rawenglish</div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="handle">@rawenglishconsultant</div>
+    </div>
+</body>
+</html>
