@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw English — Teste de Nível / Level Test</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #1a3a5c; --primary-dark: #0f2840; --accent: #7ec846;
+            --accent-hover: #6ab838; --blue: #2d7dd2; --light: #f4f8f1;
+            --text: #333; --text-light: #666; --bg: #f0f4f8;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* Header */
+        .header {
+            background: var(--primary-dark); padding: 14px 20px;
+            display: flex; justify-content: center; align-items: center; gap: 12px;
+        }
+        .header img { height: 35px; border-radius: 6px; }
+        .header .title { color: white; font-weight: 700; font-size: 1.1rem; }
+        .header .title span { color: var(--accent); }
+
+        /* Container */
+        .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+
+        /* Intro screen */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .intro-card {
+            background: white; border-radius: 20px; padding: 40px 30px;
+            text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+            margin-top: 20px;
+        }
+        .intro-card h1 { font-size: 1.8rem; color: var(--primary); margin-bottom: 10px; }
+        .intro-card h1 em { color: var(--accent); font-style: normal; }
+        .intro-card p { color: var(--text-light); margin-bottom: 25px; line-height: 1.6; }
+        .intro-card .features {
+            display: flex; gap: 20px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap;
+        }
+        .intro-card .feature {
+            background: var(--light); padding: 14px 20px; border-radius: 12px;
+            font-size: 0.9rem; font-weight: 600; color: var(--primary);
+        }
+        .intro-card .feature span { display: block; font-size: 1.5rem; margin-bottom: 4px; }
+
+        .form-group { text-align: left; margin-bottom: 16px; max-width: 350px; margin-left: auto; margin-right: auto; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--primary); margin-bottom: 5px; }
+        .form-group input {
+            width: 100%; padding: 12px 16px; border: 2px solid #e0e8f0; border-radius: 10px;
+            font-size: 1rem; font-family: inherit; outline: none;
+        }
+        .form-group input:focus { border-color: var(--accent); }
+
+        .btn {
+            padding: 14px 40px; border-radius: 10px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; border: none; font-family: inherit; transition: all 0.2s;
+            display: inline-block; text-decoration: none;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Progress bar */
+        .progress-bar {
+            background: #e0e8f0; height: 8px; border-radius: 4px; margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue));
+            border-radius: 4px; transition: width 0.5s ease;
+        }
+        .progress-text {
+            text-align: center; font-size: 0.8rem; color: var(--text-light); margin-bottom: 10px;
+        }
+
+        /* Question card */
+        .question-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06); margin-top: 10px;
+        }
+        .question-level {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 15px;
+        }
+        .level-basic { background: #e3f2fd; color: #1565c0; }
+        .level-intermediate { background: #fff3e0; color: #e65100; }
+        .level-advanced { background: #f3e5f5; color: #7b1fa2; }
+
+        .question-text {
+            font-size: 1.15rem; font-weight: 600; color: var(--primary);
+            margin-bottom: 20px; line-height: 1.5;
+        }
+        .question-context {
+            font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn {
+            display: block; width: 100%; text-align: left; padding: 14px 18px;
+            background: #f8f9fa; border: 2px solid #e0e8f0; border-radius: 12px;
+            font-size: 0.95rem; font-family: inherit; cursor: pointer;
+            transition: all 0.2s; color: var(--text);
+        }
+        .option-btn:hover { border-color: var(--blue); background: #edf4fc; }
+        .option-btn.selected { border-color: var(--blue); background: #e3f2fd; font-weight: 600; }
+        .option-btn.correct { border-color: var(--accent); background: #e8f5e9; }
+        .option-btn.wrong { border-color: #e74c3c; background: #fdecea; }
+        .option-btn:disabled { cursor: default; opacity: 0.85; }
+
+        .feedback {
+            margin-top: 15px; padding: 14px 18px; border-radius: 12px;
+            font-size: 0.9rem; display: none;
+        }
+        .feedback.correct { background: #e8f5e9; color: #2e7d32; border-left: 4px solid var(--accent); display: block; }
+        .feedback.wrong { background: #fdecea; color: #c62828; border-left: 4px solid #e74c3c; display: block; }
+
+        .next-btn {
+            margin-top: 20px; padding: 12px 30px; background: var(--blue); color: white;
+            border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+            cursor: pointer; font-family: inherit; display: none;
+        }
+        .next-btn.show { display: inline-block; }
+
+        /* Results */
+        .results-card {
+            background: white; border-radius: 20px; padding: 40px 30px;
+            text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+            margin-top: 20px;
+        }
+        .score-circle {
+            width: 150px; height: 150px; border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin: 0 auto 25px; font-weight: 900;
+        }
+        .score-circle .score-num { font-size: 2.5rem; }
+        .score-circle .score-total { font-size: 0.9rem; opacity: 0.7; }
+
+        .score-beginner { background: linear-gradient(135deg, #e3f2fd, #bbdefb); color: #1565c0; }
+        .score-intermediate { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #e65100; }
+        .score-advanced { background: linear-gradient(135deg, #f3e5f5, #e1bee7); color: #7b1fa2; }
+
+        .result-level {
+            font-size: 1.6rem; font-weight: 800; margin-bottom: 8px;
+        }
+        .result-desc {
+            color: var(--text-light); font-size: 1rem; margin-bottom: 25px; line-height: 1.6;
+        }
+        .result-breakdown {
+            display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap;
+        }
+        .breakdown-item {
+            background: var(--light); padding: 12px 18px; border-radius: 10px; text-align: center;
+        }
+        .breakdown-item .num { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+        .breakdown-item .label { font-size: 0.75rem; color: var(--text-light); }
+
+        .cta-box {
+            background: linear-gradient(135deg, var(--primary-dark), var(--blue));
+            border-radius: 14px; padding: 25px; color: white; margin-top: 20px;
+        }
+        .cta-box h3 { margin-bottom: 8px; }
+        .cta-box p { opacity: 0.8; font-size: 0.9rem; margin-bottom: 15px; }
+        .btn-whatsapp {
+            background: #25D366; color: white; padding: 12px 30px; border-radius: 10px;
+            font-weight: 700; text-decoration: none; display: inline-block; font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .intro-card, .question-card, .results-card { padding: 25px 20px; }
+            .intro-card h1 { font-size: 1.4rem; }
+            .intro-card .features { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="../logo.jpg" alt="Raw English">
+        <div class="title">Raw<span>English</span> — Level Test</div>
+    </div>
+
+    <div class="container">
+
+        <!-- INTRO SCREEN -->
+        <div class="screen active" id="introScreen">
+            <div class="intro-card">
+                <h1>Descubra seu <em>Nível de Inglês</em></h1>
+                <p>Teste rápido de 15 perguntas. Sem compromisso, 100% gratuito.<br>
+                Discover your English level in just a few minutes!</p>
+
+                <div class="features">
+                    <div class="feature"><span>📝</span> 15 perguntas</div>
+                    <div class="feature"><span>⏱️</span> ~5 minutos</div>
+                    <div class="feature"><span>🎯</span> Resultado imediato</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Seu Nome / Your Name</label>
+                    <input type="text" id="testName" placeholder="Ex: Maria Silva">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="testEmail" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>WhatsApp / Telefone</label>
+                    <input type="tel" id="testPhone" placeholder="(11) 99999-9999">
+                </div>
+
+                <button class="btn btn-primary" onclick="startTest()">Começar o Teste / Start Test</button>
+            </div>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div class="screen" id="questionScreen">
+            <div class="progress-text" id="progressText">Pergunta 1 de 15</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+            <div class="question-card">
+                <div class="question-level" id="questionLevel">BASIC</div>
+                <div class="question-context" id="questionContext"></div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Próxima / Next →</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="screen" id="resultsScreen">
+            <div class="results-card">
+                <div class="score-circle" id="scoreCircle">
+                    <div class="score-num" id="scoreNum">0</div>
+                    <div class="score-total">/ 15</div>
+                </div>
+
+                <div class="result-level" id="resultLevel"></div>
+                <div class="result-desc" id="resultDesc"></div>
+
+                <div class="result-breakdown" id="resultBreakdown"></div>
+
+                <div class="cta-box">
+                    <h3>🎯 Quer melhorar seu inglês?</h3>
+                    <p>Professor André viveu 18 anos nos EUA. Aulas personalizadas + tutor de IA 24/7.</p>
+                    <a href="https://wa.me/5561998229223?text=Olá! Fiz o teste de nível e quero saber mais sobre as aulas!" class="btn-whatsapp">📱 Falar com Professor André</a>
+                </div>
+
+                <div style="margin-top:20px;">
+                    <a href="../app/" class="btn btn-primary" style="display:inline-block;">🤖 Experimentar o Tutor de IA Grátis</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const QUESTIONS = [
+            // BASIC (5 questions)
+            {
+                level: 'basic', levelClass: 'level-basic', levelLabel: 'BÁSICO',
+                context: 'Complete a frase / Complete the sentence:',
+                text: 'Hello! My name ___ Maria.',
+                options: ['am', 'is', 'are', 'be'],
+                correct: 1,
+                explanation: { correct: '✅ "My name IS Maria" — usamos IS com "my name"', wrong: '❌ O correto é "My name IS Maria" — IS é usado com he/she/it/name' }
+            },
+            {
+                level: 'basic', levelClass: 'level-basic', levelLabel: 'BÁSICO',
+                context: 'Escolha a resposta correta / Choose the correct answer:',
+                text: 'How do you say "Eu tenho dois irmãos" in English?',
+                options: ['I am two brothers', 'I have two brothers', 'I has two brothers', 'I do two brothers'],
+                correct: 1,
+                explanation: { correct: '✅ "I HAVE two brothers" — ter = to have', wrong: '❌ O correto é "I HAVE two brothers" — usamos HAVE com I/you/we/they' }
+            },
+            {
+                level: 'basic', levelClass: 'level-basic', levelLabel: 'BÁSICO',
+                context: 'Complete:',
+                text: 'She ___ to the store every day.',
+                options: ['go', 'goes', 'going', 'gone'],
+                correct: 1,
+                explanation: { correct: '✅ "She GOES" — com he/she/it adicionamos -S ou -ES ao verbo', wrong: '❌ O correto é "She GOES" — na terceira pessoa (he/she/it) o verbo ganha -S ou -ES' }
+            },
+            {
+                level: 'basic', levelClass: 'level-basic', levelLabel: 'BÁSICO',
+                context: 'O que significa / What does this mean:',
+                text: '"I would like a glass of water, please."',
+                options: ['Eu gostaria de um copo de água, por favor', 'Eu gosto de um copo de água', 'Eu quero vidro de água', 'Eu gostava de água com gelo'],
+                correct: 0,
+                explanation: { correct: '✅ "I would like" = "Eu gostaria de" — forma educada de pedir algo', wrong: '❌ "I would like" significa "Eu gostaria de" — é uma forma polida de fazer um pedido' }
+            },
+            {
+                level: 'basic', levelClass: 'level-basic', levelLabel: 'BÁSICO',
+                context: 'Escolha a opção correta:',
+                text: 'What time ___ you wake up?',
+                options: ['does', 'do', 'is', 'are'],
+                correct: 1,
+                explanation: { correct: '✅ "What time DO you wake up?" — usamos DO com you/I/we/they', wrong: '❌ O correto é DO — com you/I/we/they usamos DO em perguntas' }
+            },
+
+            // INTERMEDIATE (5 questions)
+            {
+                level: 'intermediate', levelClass: 'level-intermediate', levelLabel: 'INTERMEDIÁRIO',
+                context: 'Choose the correct form:',
+                text: 'I ___ to New York three times so far.',
+                options: ['went', 'have been', 'was going', 'go'],
+                correct: 1,
+                explanation: { correct: '✅ "I HAVE BEEN" — Present Perfect com "so far" indica experiência até agora', wrong: '❌ O correto é "have been" — usamos Present Perfect (have + past participle) com "so far"' }
+            },
+            {
+                level: 'intermediate', levelClass: 'level-intermediate', levelLabel: 'INTERMEDIÁRIO',
+                context: 'Fill in the blank:',
+                text: 'If I ___ more time, I would travel the world.',
+                options: ['have', 'had', 'would have', 'has'],
+                correct: 1,
+                explanation: { correct: '✅ "If I HAD" — Second Conditional: If + past simple + would', wrong: '❌ O correto é "had" — no Second Conditional usamos: If + past simple, ... would + verb' }
+            },
+            {
+                level: 'intermediate', levelClass: 'level-intermediate', levelLabel: 'INTERMEDIÁRIO',
+                context: 'What does this phrasal verb mean?',
+                text: '"I need to look into this matter."',
+                options: ['Olhar para dentro de algo', 'Investigar/examinar algo', 'Procurar algo perdido', 'Cuidar de algo'],
+                correct: 1,
+                explanation: { correct: '✅ "Look into" = investigar, examinar — um phrasal verb muito usado em contextos profissionais', wrong: '❌ "Look into" significa investigar ou examinar algo com mais cuidado' }
+            },
+            {
+                level: 'intermediate', levelClass: 'level-intermediate', levelLabel: 'INTERMEDIÁRIO',
+                context: 'Choose the best option:',
+                text: 'The meeting ___ by the time we arrived.',
+                options: ['already started', 'has already started', 'had already started', 'was already starting'],
+                correct: 2,
+                explanation: { correct: '✅ "HAD already started" — Past Perfect para ação anterior a outra no passado', wrong: '❌ O correto é "had already started" — Past Perfect indica algo que aconteceu ANTES de outra ação passada' }
+            },
+            {
+                level: 'intermediate', levelClass: 'level-intermediate', levelLabel: 'INTERMEDIÁRIO',
+                context: 'Choose the correct word:',
+                text: 'She speaks English very ___.',
+                options: ['good', 'well', 'nice', 'fine'],
+                correct: 1,
+                explanation: { correct: '✅ "WELL" — advérbio que modifica o verbo "speaks". Good é adjetivo.', wrong: '❌ O correto é "well" — depois de verbos usamos advérbios (well), não adjetivos (good)' }
+            },
+
+            // ADVANCED (5 questions)
+            {
+                level: 'advanced', levelClass: 'level-advanced', levelLabel: 'AVANÇADO',
+                context: 'Choose the most natural expression:',
+                text: 'The project failed because they ___ the potential risks.',
+                options: ['underrated', 'underestimated', 'undervalued', 'undermined'],
+                correct: 1,
+                explanation: { correct: '✅ "Underestimated" — subestimaram os riscos. Nuance: underrate=subestimar habilidade, undervalue=subestimar valor, undermine=sabotar', wrong: '❌ "Underestimated" é o mais natural aqui — significa subestimar a gravidade/probabilidade de algo' }
+            },
+            {
+                level: 'advanced', levelClass: 'level-advanced', levelLabel: 'AVANÇADO',
+                context: 'What does this idiom mean?',
+                text: '"Let\'s not beat around the bush."',
+                options: ['Não vamos bater em arbustos', 'Não vamos perder tempo com rodeios', 'Não vamos desistir facilmente', 'Não vamos exagerar na situação'],
+                correct: 1,
+                explanation: { correct: '✅ "Beat around the bush" = enrolar, fazer rodeios — ir direto ao ponto!', wrong: '❌ "Beat around the bush" significa fazer rodeios, evitar ir direto ao ponto' }
+            },
+            {
+                level: 'advanced', levelClass: 'level-advanced', levelLabel: 'AVANÇADO',
+                context: 'Choose the correct form (Subjunctive):',
+                text: 'The manager insisted that he ___ the report by Friday.',
+                options: ['finishes', 'finish', 'finished', 'would finish'],
+                correct: 1,
+                explanation: { correct: '✅ "FINISH" (sem -S) — Subjunctive mood após verbos como insist, suggest, recommend', wrong: '❌ O correto é "finish" (base form) — após insist/suggest/recommend usamos o Subjunctive: que é o verbo na forma base' }
+            },
+            {
+                level: 'advanced', levelClass: 'level-advanced', levelLabel: 'AVANÇADO',
+                context: 'Choose the word that best fits:',
+                text: 'Her ___ of the situation was remarkably accurate.',
+                options: ['assessment', 'judgement', 'verdict', 'estimation'],
+                correct: 0,
+                explanation: { correct: '✅ "Assessment" — avaliação cuidadosa de uma situação. Judgment=julgamento, verdict=veredito, estimation=estimativa numérica', wrong: '❌ "Assessment" é a melhor opção — significa uma avaliação cuidadosa e analítica de uma situação' }
+            },
+            {
+                level: 'advanced', levelClass: 'level-advanced', levelLabel: 'AVANÇADO',
+                context: 'Identify the correct sentence:',
+                text: 'Which sentence is grammatically correct?',
+                options: [
+                    'Had I known about the meeting, I would have attended.',
+                    'If I would have known about the meeting, I would have attended.',
+                    'Had I knew about the meeting, I would have attended.',
+                    'If I had knew about the meeting, I would attended.'
+                ],
+                correct: 0,
+                explanation: { correct: '✅ "Had I known..." — inversão do Third Conditional (formal). Equivale a "If I had known..."', wrong: '❌ O correto é "Had I known..." — é a forma invertida (formal) do Third Conditional: Had + subject + past participle' }
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answers = [];
+        let studentName = '';
+        let studentEmail = '';
+        let studentPhone = '';
+
+        function startTest() {
+            studentName = document.getElementById('testName').value.trim();
+            studentEmail = document.getElementById('testEmail').value.trim();
+            studentPhone = document.getElementById('testPhone').value.trim();
+            if (!studentName) { alert('Por favor, digite seu nome / Please enter your name'); return; }
+            currentQuestion = 0;
+            score = 0;
+            answers = [];
+            showScreen('questionScreen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = QUESTIONS[currentQuestion];
+            document.getElementById('progressText').textContent = `Pergunta ${currentQuestion + 1} de ${QUESTIONS.length}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion) / QUESTIONS.length) * 100}%`;
+            document.getElementById('questionLevel').className = `question-level ${q.levelClass}`;
+            document.getElementById('questionLevel').textContent = q.levelLabel;
+            document.getElementById('questionContext').textContent = q.context;
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').className = 'next-btn';
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = `${String.fromCharCode(65 + i)}) ${opt}`;
+                btn.onclick = () => selectAnswer(i);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(index) {
+            const q = QUESTIONS[currentQuestion];
+            const buttons = document.querySelectorAll('.option-btn');
+            const feedback = document.getElementById('feedback');
+            const isCorrect = index === q.correct;
+
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === q.correct) btn.classList.add('correct');
+                if (i === index && !isCorrect) btn.classList.add('wrong');
+            });
+
+            if (isCorrect) {
+                score++;
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = q.explanation.correct;
+            } else {
+                feedback.className = 'feedback wrong';
+                feedback.innerHTML = q.explanation.wrong;
+            }
+
+            answers.push({ question: currentQuestion, selected: index, correct: q.correct, isCorrect });
+
+            document.getElementById('nextBtn').className = 'next-btn show';
+            document.getElementById('nextBtn').textContent = currentQuestion < QUESTIONS.length - 1 ? 'Próxima / Next →' : 'Ver Resultado / See Results 🎯';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= QUESTIONS.length) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            showScreen('resultsScreen');
+            document.getElementById('progressFill').style.width = '100%';
+
+            const basicScore = answers.filter((a, i) => i < 5 && a.isCorrect).length;
+            const interScore = answers.filter((a, i) => i >= 5 && i < 10 && a.isCorrect).length;
+            const advScore = answers.filter((a, i) => i >= 10 && a.isCorrect).length;
+
+            let level, levelClass, desc;
+            if (score <= 5) {
+                level = '🔤 Básico / Beginner';
+                levelClass = 'score-beginner';
+                desc = 'Você está começando sua jornada no inglês! Com as aulas certas e prática diária com IA, você vai evoluir rapidamente. / You\'re at the beginning of your English journey — with the right classes and daily AI practice, you\'ll improve fast!';
+            } else if (score <= 10) {
+                level = '📚 Intermediário / Intermediate';
+                levelClass = 'score-intermediate';
+                desc = 'Você já tem uma boa base! Agora é hora de refinar gramática, expandir vocabulário e ganhar fluência. / You have a solid foundation! Time to refine grammar, expand vocabulary, and build fluency.';
+            } else {
+                level = '🎓 Avançado / Advanced';
+                levelClass = 'score-advanced';
+                desc = 'Impressionante! Seu inglês é forte. Hora de dominar nuances, expressões idiomáticas e comunicação profissional de alto nível. / Impressive! Your English is strong. Time to master nuances, idioms, and high-level professional communication.';
+            }
+
+            document.getElementById('scoreCircle').className = `score-circle ${levelClass}`;
+            document.getElementById('scoreNum').textContent = score;
+            document.getElementById('resultLevel').textContent = level;
+            document.getElementById('resultDesc').textContent = desc;
+
+            document.getElementById('resultBreakdown').innerHTML = `
+                <div class="breakdown-item"><div class="num">${basicScore}/5</div><div class="label">Básico</div></div>
+                <div class="breakdown-item"><div class="num">${interScore}/5</div><div class="label">Intermediário</div></div>
+                <div class="breakdown-item"><div class="num">${advScore}/5</div><div class="label">Avançado</div></div>
+            `;
+
+            // Update WhatsApp link with student info
+            const waLink = document.querySelector('.btn-whatsapp');
+            const msg = `Olá Professor André! Sou ${studentName}, fiz o teste de nível e tirei ${score}/15 (${level.replace(/[🔤📚🎓] /, '')}). Quero saber mais sobre as aulas!`;
+            waLink.href = `https://wa.me/5561998229223?text=${encodeURIComponent(msg)}`;
+
+            // ===== EMAIL NOTIFICATION TO ANDRÉ =====
+            sendResultsEmail(studentName, studentEmail, studentPhone, score, level, basicScore, interScore, advScore);
+        }
+
+        function sendResultsEmail(name, email, phone, totalScore, level, basic, inter, adv) {
+            // Hidden iframe form submission — works on ALL browsers
+            var iframe = document.createElement('iframe');
+            iframe.name = 'formspree_target';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://formspree.io/f/xzdajazj';
+            form.target = 'formspree_target';
+
+            var fields = {
+                '_subject': '🎯 Novo Teste — ' + (name || 'Anônimo') + ' (' + totalScore + '/15)',
+                'Nome': name || 'Não informado',
+                'Email': email || 'Não informado',
+                'Telefone/WhatsApp': phone || 'Não informado',
+                'Score': totalScore + '/15',
+                'Nivel': level,
+                'Basico': basic + '/5',
+                'Intermediario': inter + '/5',
+                'Avancado': adv + '/5',
+                'Data': new Date().toLocaleString('pt-BR')
+            };
+
+            for (var key in fields) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+            console.log('✅ Form submitted to Formspree');
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+    </script>
+</body>
+</html>

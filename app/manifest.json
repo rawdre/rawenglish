@@ -1,0 +1,22 @@
+{
+  "name": "Raw English AI — Practice Platform",
+  "short_name": "RawEnglish",
+  "description": "Pratique inglês com seu tutor de IA pessoal",
+  "start_url": "/app/",
+  "display": "standalone",
+  "background_color": "#0f2840",
+  "theme_color": "#1a3a5c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "../logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "../logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

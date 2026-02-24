@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw English — Proposta Comercial</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background: white;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            padding: 40px 50px;
+            position: relative;
+            page-break-after: always;
+        }
+
+        @media print {
+            body { background: white; }
+            .page { padding: 30px 40px; margin: 0; width: 100%; }
+            .no-print { display: none; }
+        }
+
+        /* Lang toggle for PDF preview */
+        .lang-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            display: flex;
+            gap: 6px;
+            background: rgba(255,255,255,0.95);
+            padding: 5px 8px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .lang-btn {
+            cursor: pointer;
+            font-size: 22px;
+            opacity: 0.5;
+            border: none;
+            background: none;
+            padding: 2px 4px;
+            border-radius: 6px;
+        }
+        .lang-btn:hover { opacity: 0.8; }
+        .lang-btn.active { opacity: 1; background: rgba(126,200,70,0.1); }
+
+        :root {
+            --primary: #1a3a5c;
+            --accent: #7ec846;
+            --gold: #2d7dd2;
+        }
+
+        /* Cover Page */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 297mm;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #0f2840 50%, #0f3460 100%);
+            color: white;
+        }
+
+        .cover-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .cover-logo span { color: var(--accent); }
+
+        .cover-tagline {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 60px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .cover h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .cover h1 em {
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        .cover-sub {
+            font-size: 1.15rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 500px;
+        }
+
+        .cover-footer {
+            position: absolute;
+            bottom: 40px;
+            text-align: center;
+            width: 100%;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+
+        /* Content Pages */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 15px;
+            margin-bottom: 35px;
+        }
+
+        .header-logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .header-logo span { color: var(--accent); }
+
+        .page-title {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            margin-top: 25px;
+        }
+
+        p { margin-bottom: 12px; color: #555; }
+
+        .highlight-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--accent);
+            padding: 20px 25px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .highlight-box p { margin: 0; color: #444; }
+
+        /* Pricing Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .pricing-table th {
+            background: var(--primary);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .pricing-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .pricing-table tr:nth-child(even) { background: #f8f9fa; }
+
+        .pricing-table .plan-name-cell {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .pricing-table .price-cell {
+            font-weight: 800;
+            color: var(--accent);
+            font-size: 1.05rem;
+        }
+
+        /* Feature list */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            color: var(--accent);
+            font-weight: 700;
+            margin-right: 12px;
+        }
+
+        /* Discount table */
+        .discount-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .discount-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .discount-card .period {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .discount-card .discount {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .discount-card .label {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* Contact box */
+        .contact-box {
+            background: linear-gradient(135deg, var(--primary), #0f3460);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .contact-box h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-top: 0;
+        }
+
+        .contact-box p {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .contact-item {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+        }
+
+        .contact-item strong { color: var(--accent); }
+
+        .page-number {
+            position: absolute;
+            bottom: 25px;
+            right: 50px;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        [lang="en"] { display: none; }
+        body.en [lang="en"] { display: block; }
+        body.en [lang="pt"] { display: none; }
+        body.en [lang="pt-inline"] { display: none; }
+        body:not(.en) [lang="en-inline"] { display: none; }
+        [lang="pt-inline"], [lang="en-inline"] { display: inline; }
+        body.en [lang="pt-inline"] { display: none; }
+        body.en [lang="en-inline"] { display: inline; }
+    </style>
+</head>
+<body>
+
+    <div class="lang-toggle no-print">
+        <button class="lang-btn active" onclick="setLang('pt')" title="Português">🇧🇷</button>
+        <button class="lang-btn" onclick="setLang('en')" title="English">🇺🇸</button>
+    </div>
+
+    <!-- PAGE 1: Cover -->
+    <div class="page cover">
+        <img src="logo.jpg" alt="Raw English" style="height:100px;border-radius:14px;margin-bottom:15px;">
+        <div class="cover-logo">Raw<span>English</span></div>
+        <div class="cover-tagline">Corporate English Training</div>
+        
+        <div lang="pt">
+            <h1>Proposta de <em>Treinamento Corporativo</em> de Inglês</h1>
+            <p class="cover-sub">Capacite sua equipe com inglês real para negócios — com imersão cultural e inteligência artificial.</p>
+        </div>
+        <div lang="en">
+            <h1><em>Corporate English</em> Training Proposal</h1>
+            <p class="cover-sub">Empower your team with real business English — with cultural immersion and artificial intelligence.</p>
+        </div>
+
+        <div class="cover-footer">
+            Raw English © 2026 | fb.com/RawEnglishConsultant
+        </div>
+    </div>
+
+    <!-- PAGE 2: About & Differentiators -->
+    <div class="page">
+        <div class="header-bar">
+            <div class="header-logo">Raw<span>English</span></div>
+            <div class="page-title">
+                <span lang="pt-inline">Proposta Comercial</span>
+                <span lang="en-inline">Business Proposal</span>
+            </div>
+        </div>
+
+        <div lang="pt">
+            <h2>Quem Somos</h2>
+            <p>A Raw English é uma empresa de treinamento corporativo de inglês fundada por André Raw, professor brasileiro com mais de <strong>18 anos vivendo nos Estados Unidos</strong>.</p>
+            <p>Diferente de escolas tradicionais, nosso método combina <strong>imersão cultural real</strong> — expressões, etiqueta empresarial e comunicação do dia a dia — com <strong>inteligência artificial</strong> que personaliza o aprendizado de cada aluno.</p>
+
+            <div class="highlight-box">
+                <p><strong>Nossa missão:</strong> Fazer sua equipe falar inglês com confiança em reuniões, negociações e viagens de negócio — em menos tempo e com resultados mensuráveis.</p>
+            </div>
+
+            <h2>Por que a Raw English?</h2>
+            <h3>🌎 Imersão Cultural Real</h3>
+            <p>Seu time aprende o inglês que se fala de verdade — gírias, expressões, etiqueta de negócios. Não é inglês de livro didático.</p>
+
+            <h3>🤖 Inteligência Artificial Personalizada</h3>
+            <p>Cada aluno recebe um tutor de IA que identifica pontos fracos, cria exercícios sob medida e está disponível 24 horas por dia para prática de conversação.</p>
+
+            <h3>💼 Foco em Resultados Corporativos</h3>
+            <p>Treinamento direcionado para o que sua empresa precisa: e-mails profissionais, conference calls, apresentações, negociações internacionais.</p>
+
+            <h3>📊 Relatórios Mensais para o RH</h3>
+            <p>Acompanhe a evolução de cada colaborador com relatórios detalhados de progresso, frequência e desempenho.</p>
+        </div>
+
+        <div lang="en">
+            <h2>Who We Are</h2>
+            <p>Raw English is a corporate English training company founded by André Raw, a Brazilian teacher with over <strong>18 years living in the United States</strong>.</p>
+            <p>Unlike traditional schools, our method combines <strong>real cultural immersion</strong> — expressions, business etiquette, and everyday communication — with <strong>artificial intelligence</strong> that personalizes each student's learning path.</p>
+
+            <div class="highlight-box">
+                <p><strong>Our mission:</strong> Make your team speak English with confidence in meetings, negotiations, and business travel — in less time with measurable results.</p>
+            </div>
+
+            <h2>Why Raw English?</h2>
+            <h3>🌎 Real Cultural Immersion</h3>
+            <p>Your team learns the English people actually speak — slang, expressions, business etiquette. Not textbook English.</p>
+
+            <h3>🤖 Personalized Artificial Intelligence</h3>
+            <p>Each student gets an AI tutor that identifies weaknesses, creates tailored exercises, and is available 24/7 for conversation practice.</p>
+
+            <h3>💼 Corporate Results Focus</h3>
+            <p>Training targeted to what your company needs: professional emails, conference calls, presentations, international negotiations.</p>
+
+            <h3>📊 Monthly Reports for HR</h3>
+            <p>Track each employee's progress with detailed reports on performance, attendance, and development.</p>
+        </div>
+
+        <div class="page-number">2</div>
+    </div>
+
+    <!-- PAGE 3: Plans & Pricing -->
+    <div class="page">
+        <div class="header-bar">
+            <div class="header-logo">Raw<span>English</span></div>
+            <div class="page-title">
+                <span lang="pt-inline">Planos & Investimento</span>
+                <span lang="en-inline">Plans & Investment</span>
+            </div>
+        </div>
+
+        <div lang="pt">
+            <h2>Planos Corporativos</h2>
+            <p>Oferecemos três planos flexíveis para atender equipes de todos os tamanhos e necessidades.</p>
+        </div>
+        <div lang="en">
+            <h2>Corporate Plans</h2>
+            <p>We offer three flexible plans to serve teams of all sizes and needs.</p>
+        </div>
+
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th><span lang="pt-inline">Plano</span><span lang="en-inline">Plan</span></th>
+                    <th><span lang="pt-inline">O que inclui</span><span lang="en-inline">What's Included</span></th>
+                    <th><span lang="pt-inline">Investimento</span><span lang="en-inline">Investment</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="plan-name-cell">Essencial</td>
+                    <td>
+                        <span lang="pt-inline">Tutor IA 24/7 + exercícios semanais + relatórios mensais</span>
+                        <span lang="en-inline">24/7 AI Tutor + weekly exercises + monthly reports</span>
+                    </td>
+                    <td class="price-cell">R$97<span style="font-size:0.8rem;color:#888;font-weight:400;">
+                        <span lang="pt-inline">/aluno/mês</span>
+                        <span lang="en-inline">/student/mo</span>
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="plan-name-cell">Pro ⭐</td>
+                    <td>
+                        <span lang="pt-inline">Tudo do Essencial + aulas em grupo 2x/semana (45min–1h) com professor</span>
+                        <span lang="en-inline">Everything in Essencial + group classes 2x/week (45min–1h) with teacher</span>
+                    </td>
+                    <td class="price-cell">R$497<span style="font-size:0.8rem;color:#888;font-weight:400;">
+                        <span lang="pt-inline">/aluno/mês</span>
+                        <span lang="en-inline">/student/mo</span>
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="plan-name-cell">VIP</td>
+                    <td>
+                        <span lang="pt-inline">Tudo do Pro + aulas individuais 1-on-1 + preparatório TOEFL + currículo personalizado IA</span>
+                        <span lang="en-inline">Everything in Pro + 1-on-1 private classes + TOEFL prep + AI-personalized curriculum</span>
+                    </td>
+                    <td class="price-cell">R$800<span style="font-size:0.8rem;color:#888;font-weight:400;">
+                        <span lang="pt-inline">/aluno/mês</span>
+                        <span lang="en-inline">/student/mo</span>
+                    </span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div lang="pt">
+            <h3>Plano Pro — Detalhamento (Mais Popular)</h3>
+        </div>
+        <div lang="en">
+            <h3>Pro Plan — Breakdown (Most Popular)</h3>
+        </div>
+
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th><span lang="pt-inline">Alunos por Turma</span><span lang="en-inline">Students per Group</span></th>
+                    <th><span lang="pt-inline">Valor por Aluno</span><span lang="en-inline">Price per Student</span></th>
+                    <th><span lang="pt-inline">Total Mensal</span><span lang="en-inline">Monthly Total</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>4 <span lang="pt-inline">alunos</span><span lang="en-inline">students</span></td>
+                    <td>R$497</td>
+                    <td class="price-cell">R$1.988</td>
+                </tr>
+                <tr>
+                    <td>5 <span lang="pt-inline">alunos</span><span lang="en-inline">students</span></td>
+                    <td>R$457</td>
+                    <td class="price-cell">R$2.285</td>
+                </tr>
+                <tr>
+                    <td>6 <span lang="pt-inline">alunos</span><span lang="en-inline">students</span></td>
+                    <td>R$397</td>
+                    <td class="price-cell">R$2.382</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div lang="pt"><h2>Descontos por Compromisso</h2></div>
+        <div lang="en"><h2>Commitment Discounts</h2></div>
+
+        <div class="discount-grid">
+            <div class="discount-card">
+                <div class="period">
+                    <span lang="pt-inline">Trimestral</span>
+                    <span lang="en-inline">Quarterly</span>
+                </div>
+                <div class="discount">5%</div>
+                <div class="label">
+                    <span lang="pt-inline">de desconto</span>
+                    <span lang="en-inline">discount</span>
+                </div>
+            </div>
+            <div class="discount-card">
+                <div class="period">
+                    <span lang="pt-inline">Semestral</span>
+                    <span lang="en-inline">Semi-Annual</span>
+                </div>
+                <div class="discount">10%</div>
+                <div class="label">
+                    <span lang="pt-inline">de desconto</span>
+                    <span lang="en-inline">discount</span>
+                </div>
+            </div>
+            <div class="discount-card">
+                <div class="period">
+                    <span lang="pt-inline">Anual</span>
+                    <span lang="en-inline">Annual</span>
+                </div>
+                <div class="discount">15%</div>
+                <div class="label">
+                    <span lang="pt-inline">de desconto</span>
+                    <span lang="en-inline">discount</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <div lang="pt">
+                <p><strong>📋 Avaliação de nível gratuita</strong> — Antes de começar, avaliamos o inglês de cada colaborador sem nenhum custo. Isso nos permite montar turmas homogêneas e maximizar resultados.</p>
+            </div>
+            <div lang="en">
+                <p><strong>📋 Free level assessment</strong> — Before starting, we assess each employee's English at no cost. This allows us to create homogeneous groups and maximize results.</p>
+            </div>
+        </div>
+
+        <div class="page-number">3</div>
+    </div>
+
+    <!-- PAGE 4: Method & Contact -->
+    <div class="page">
+        <div class="header-bar">
+            <div class="header-logo">Raw<span>English</span></div>
+            <div class="page-title">
+                <span lang="pt-inline">Metodologia & Contato</span>
+                <span lang="en-inline">Methodology & Contact</span>
+            </div>
+        </div>
+
+        <div lang="pt">
+            <h2>Nossa Metodologia</h2>
+
+            <h3>1. Avaliação Diagnóstica</h3>
+            <p>Teste de nível aplicado a todos os colaboradores para identificar proficiência, pontos fortes e áreas de melhoria.</p>
+
+            <h3>2. Formação de Turmas</h3>
+            <p>Agrupamos colaboradores por nível (básico, intermediário, avançado) para garantir que todos evoluam no mesmo ritmo.</p>
+
+            <h3>3. Aulas Ao Vivo + Prática com IA</h3>
+            <p>2 aulas semanais com o professor André (45min–1h cada), complementadas por prática diária com nosso tutor de IA que:</p>
+            <ul class="feature-list">
+                <li>Adapta exercícios ao nível e progresso de cada aluno</li>
+                <li>Pratica conversação 24/7 — como ter um professor particular sempre disponível</li>
+                <li>Corrige gramática, pronúncia e vocabulário em tempo real</li>
+                <li>Gera conteúdo relevante para a área de atuação da empresa</li>
+            </ul>
+
+            <h3>4. Acompanhamento Contínuo</h3>
+            <p>Relatórios mensais enviados ao RH com métricas de:</p>
+            <ul class="feature-list">
+                <li>Frequência e participação nas aulas</li>
+                <li>Evolução de nível (testes periódicos)</li>
+                <li>Horas de prática com IA</li>
+                <li>Áreas de destaque e pontos de atenção</li>
+            </ul>
+        </div>
+
+        <div lang="en">
+            <h2>Our Methodology</h2>
+
+            <h3>1. Diagnostic Assessment</h3>
+            <p>Level test applied to all employees to identify proficiency, strengths, and areas for improvement.</p>
+
+            <h3>2. Group Formation</h3>
+            <p>We group employees by level (beginner, intermediate, advanced) to ensure everyone progresses at the right pace.</p>
+
+            <h3>3. Live Classes + AI Practice</h3>
+            <p>2 weekly classes with teacher André (45min–1h each), complemented by daily practice with our AI tutor that:</p>
+            <ul class="feature-list">
+                <li>Adapts exercises to each student's level and progress</li>
+                <li>Practices conversation 24/7 — like having a private tutor always available</li>
+                <li>Corrects grammar, pronunciation, and vocabulary in real-time</li>
+                <li>Generates content relevant to the company's industry</li>
+            </ul>
+
+            <h3>4. Continuous Monitoring</h3>
+            <p>Monthly reports sent to HR with metrics on:</p>
+            <ul class="feature-list">
+                <li>Class attendance and participation</li>
+                <li>Level progression (periodic tests)</li>
+                <li>Hours of AI practice</li>
+                <li>Highlights and areas needing attention</li>
+            </ul>
+        </div>
+
+        <div class="contact-box">
+            <div lang="pt">
+                <h3>Vamos Começar?</h3>
+                <p>Entre em contato para agendar uma avaliação gratuita da sua equipe.</p>
+            </div>
+            <div lang="en">
+                <h3>Ready to Start?</h3>
+                <p>Get in touch to schedule a free assessment for your team.</p>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item"><strong>📱 WhatsApp:</strong> +55 61 99822-9223</div>
+                <div class="contact-item"><strong>📧 Email:</strong> rawandre@gmail.com</div>
+                <div class="contact-item"><strong>🌐 Facebook:</strong> /RawEnglishConsultant</div>
+            </div>
+        </div>
+
+        <div class="page-number">4</div>
+    </div>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            if (lang === 'en') {
+                document.body.classList.add('en');
+                document.querySelector('.lang-btn:nth-child(2)').classList.add('active');
+            } else {
+                document.body.classList.remove('en');
+                document.querySelector('.lang-btn:nth-child(1)').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

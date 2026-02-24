@@ -1,0 +1,14 @@
+{
+  "students": {
+    "raw2026a": {
+      "level": "beginner",
+      "levelLabel": "Básico",
+      "active": true
+    },
+    "raw2026b": {
+      "level": "advanced",
+      "levelLabel": "Avançado",
+      "active": true
+    }
+  }
+}

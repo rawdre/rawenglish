@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw English — Corporate English Training</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #1a3a5c;
+            --primary-dark: #0f2840;
+            --accent: #7ec846;
+            --accent-hover: #6ab838;
+            --accent-light: rgba(126, 200, 70, 0.15);
+            --blue: #2d7dd2;
+            --blue-light: #3a8fe0;
+            --light: #f4f8f1;
+            --text: #333;
+            --text-light: #666;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
+            display: flex;
+            gap: 8px;
+            background: rgba(255,255,255,0.95);
+            padding: 6px 10px;
+            border-radius: 30px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            cursor: pointer;
+            font-size: 28px;
+            opacity: 0.5;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        .lang-btn:hover { opacity: 0.8; }
+        .lang-btn.active {
+            opacity: 1;
+            background: var(--accent-light);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 40, 64, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 0;
+            z-index: 999;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 45px;
+            border-radius: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.6rem;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+        .mobile-nav-overlay.show { display: block; }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0; right: -280px;
+            width: 280px; height: 100vh;
+            background: var(--primary-dark);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            padding: 70px 25px 30px;
+            overflow-y: auto;
+        }
+        .mobile-nav.open { right: 0; }
+
+        .mobile-nav a {
+            display: block;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            padding: 14px 0;
+            font-size: 1.05rem;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            transition: color 0.3s;
+        }
+        .mobile-nav a:hover { color: var(--accent); }
+
+        .mobile-nav-close {
+            position: absolute;
+            top: 18px; right: 18px;
+            background: none; border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 1.5rem; cursor: pointer;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--blue) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(126, 200, 70, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(45, 125, 210, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 650px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 em {
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: rgba(255,255,255,0.75);
+            margin-bottom: 35px;
+            line-height: 1.7;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(126, 200, 70, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            margin-left: 15px;
+        }
+
+        .btn-outline:hover {
+            border-color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: white;
+            padding: 40px 0;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Differentiators */
+        .diff-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .diff-card {
+            background: white;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+            transition: transform 0.3s;
+            border: 1px solid #e8f0e0;
+        }
+
+        .diff-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .diff-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .diff-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .diff-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Plans */
+        .plans-section { background: var(--light); }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            align-items: start;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+            text-align: center;
+            position: relative;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .plan-card.featured {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .plan-card.featured .plan-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .plan-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .plan-price {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--accent);
+            margin: 15px 0 5px;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .plan-period {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        .plan-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            color: var(--text);
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--accent);
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        /* Process */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin: 0 auto 15px;
+        }
+
+        .process-step h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .process-step p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* About */
+        .about-section {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .about-stat {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(126, 200, 70, 0.2);
+        }
+
+        .about-stat .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .about-stat .label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 3px;
+        }
+
+        .about-text h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, var(--accent) 0%, #4a9e1e 100%);
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.15rem;
+            margin-bottom: 35px;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: rgba(255,255,255,0.5);
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        footer a { color: var(--accent); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .diff-grid, .plans-grid { grid-template-columns: 1fr; }
+            .process-grid { grid-template-columns: repeat(2, 1fr); }
+            .about-content { grid-template-columns: 1fr; }
+            .plan-card.featured { transform: scale(1); }
+            .btn-outline { margin-left: 0; margin-top: 10px; }
+            .nav-links { display: none !important; }
+            .hamburger { display: block; }
+            .lang-toggle {
+                position: fixed;
+                top: 14px;
+                right: 60px;
+                z-index: 1002;
+            }
+        }
+
+        [lang="en"] { display: none; }
+        body.en [lang="en"] { display: block; }
+        body.en [lang="pt"] { display: none; }
+        body.en [lang="pt-inline"] { display: none; }
+        body:not(.en) [lang="en-inline"] { display: none; }
+        [lang="pt-inline"], [lang="en-inline"] { display: inline; }
+        body.en [lang="pt-inline"] { display: none; }
+        body.en [lang="en-inline"] { display: inline; }
+    </style>
+</head>
+<body>
+
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('pt')" title="Português">🇧🇷</button>
+        <button class="lang-btn" onclick="setLang('en')" title="English">🇺🇸</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <img src="logo.jpg" alt="Raw English" class="logo-img">
+            <button class="hamburger" onclick="toggleMobileNav()">☰</button>
+            <div class="nav-links">
+                <a href="#diferenciais">
+                    <span lang="pt-inline">Diferenciais</span>
+                    <span lang="en-inline">Why Us</span>
+                </a>
+                <a href="#planos">
+                    <span lang="pt-inline">Planos</span>
+                    <span lang="en-inline">Plans</span>
+                </a>
+                <a href="#processo">
+                    <span lang="pt-inline">Como Funciona</span>
+                    <span lang="en-inline">How It Works</span>
+                </a>
+                <a href="#contato">
+                    <span lang="pt-inline">Contato</span>
+                    <span lang="en-inline">Contact</span>
+                </a>
+                <a href="test/">
+                    <span lang="pt-inline">📝 Teste de Nível</span>
+                    <span lang="en-inline">📝 Level Test</span>
+                </a>
+                <a href="app/">
+                    <span lang="pt-inline">🤖 Tutor IA</span>
+                    <span lang="en-inline">🤖 AI Tutor</span>
+                </a>
+                <a href="proposta.html">
+                    <span lang="pt-inline">📄 Proposta Corporativa</span>
+                    <span lang="en-inline">📄 Corporate Proposal</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="toggleMobileNav()"></div>
+    <div class="mobile-nav" id="mobileNav">
+        <button class="mobile-nav-close" onclick="toggleMobileNav()">✕</button>
+        <a href="#diferenciais" onclick="toggleMobileNav()"><span lang="pt-inline">Diferenciais</span><span lang="en-inline">Why Us</span></a>
+        <a href="#planos" onclick="toggleMobileNav()"><span lang="pt-inline">Planos</span><span lang="en-inline">Plans</span></a>
+        <a href="#processo" onclick="toggleMobileNav()"><span lang="pt-inline">Como Funciona</span><span lang="en-inline">How It Works</span></a>
+        <a href="#contato" onclick="toggleMobileNav()"><span lang="pt-inline">Contato</span><span lang="en-inline">Contact</span></a>
+        <a href="test/"><span lang="pt-inline">📝 Teste de Nível</span><span lang="en-inline">📝 Level Test</span></a>
+        <a href="app/"><span lang="pt-inline">🤖 Tutor IA</span><span lang="en-inline">🤖 AI Tutor</span></a>
+        <a href="proposta.html"><span lang="pt-inline">📄 Proposta Corporativa</span><span lang="en-inline">📄 Corporate Proposal</span></a>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <!-- PT -->
+                <div lang="pt">
+                    <span class="hero-badge">Treinamento Corporativo de Inglês</span>
+                    <h1>Sua equipe vai <em>falar inglês com confiança</em></h1>
+                    <p>Treinamento de inglês corporativo com professor que viveu 18 anos nos EUA. Não é inglês de livro — é inglês de negócios, reuniões e resultados. Potencializado por inteligência artificial.</p>
+                    <a href="#contato" class="btn btn-primary">Agende uma Avaliação Gratuita</a>
+                    <a href="test/" class="btn btn-outline">📝 Teste seu Inglês Grátis</a>
+                </div>
+                <!-- EN -->
+                <div lang="en">
+                    <span class="hero-badge">Corporate English Training</span>
+                    <h1>Your team will <em>speak English with confidence</em></h1>
+                    <p>Corporate English training with a teacher who lived 18 years in the USA. This isn't textbook English — it's business English for meetings, deals, and real results. Powered by artificial intelligence.</p>
+                    <a href="#contato" class="btn btn-primary">Schedule a Free Assessment</a>
+                    <a href="test/" class="btn btn-outline">📝 Test Your English Free</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div>
+                    <div class="stat-number">18+</div>
+                    <div class="stat-label">
+                        <span lang="pt-inline">Anos nos EUA</span>
+                        <span lang="en-inline">Years in the USA</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">
+                        <span lang="pt-inline">Alunos Formados</span>
+                        <span lang="en-inline">Students Trained</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">
+                        <span lang="pt-inline">Prática com IA</span>
+                        <span lang="en-inline">AI Practice</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="stat-number">TOEFL</div>
+                    <div class="stat-label">
+                        <span lang="pt-inline">Preparatório Incluso</span>
+                        <span lang="en-inline">Prep Included</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Differentiators -->
+    <section id="diferenciais">
+        <div class="container">
+            <div lang="pt">
+                <h2 class="section-title">Por que a Raw English?</h2>
+                <p class="section-subtitle">Seu time merece mais do que inglês genérico. Oferecemos imersão cultural real com tecnologia de ponta.</p>
+            </div>
+            <div lang="en">
+                <h2 class="section-title">Why Raw English?</h2>
+                <p class="section-subtitle">Your team deserves more than generic English. We offer real cultural immersion with cutting-edge technology.</p>
+            </div>
+
+            <div class="diff-grid">
+                <div class="diff-card">
+                    <div class="diff-icon">🌎</div>
+                    <h3>
+                        <span lang="pt-inline">Imersão Cultural Real</span>
+                        <span lang="en-inline">Real Cultural Immersion</span>
+                    </h3>
+                    <p>
+                        <span lang="pt-inline">Professor com 18 anos vivendo nos EUA. Seu time aprende expressões, gírias e etiqueta que só quem viveu lá conhece.</span>
+                        <span lang="en-inline">Teacher with 18 years living in the USA. Your team learns expressions, slang, and etiquette only someone who lived there would know.</span>
+                    </p>
+                </div>
+                <div class="diff-card">
+                    <div class="diff-icon">🤖</div>
+                    <h3>
+                        <span lang="pt-inline">IA que Conhece o Aluno</span>
+                        <span lang="en-inline">AI That Knows Each Student</span>
+                    </h3>
+                    <p>
+                        <span lang="pt-inline">Nossa IA mapeia os pontos fracos de cada aluno e cria exercícios personalizados. Prática 24/7 entre as aulas ao vivo.</span>
+                        <span lang="en-inline">Our AI maps each student's weaknesses and creates personalized exercises. 24/7 practice between live classes.</span>
+                    </p>
+                </div>
+                <div class="diff-card">
+                    <div class="diff-icon">💼</div>
+                    <h3>
+                        <span lang="pt-inline">Foco em Resultados</span>
+                        <span lang="en-inline">Results-Driven</span>
+                    </h3>
+                    <p>
+                        <span lang="pt-inline">Inglês para reuniões, negociações, e-mails e viagens de negócio. Relatórios mensais de progresso para o RH.</span>
+                        <span lang="en-inline">English for meetings, negotiations, emails, and business travel. Monthly progress reports for HR.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans -->
+    <section id="planos" class="plans-section">
+        <div class="container">
+            <div lang="pt">
+                <h2 class="section-title">Planos Corporativos</h2>
+                <p class="section-subtitle">Soluções flexíveis para equipes de todos os tamanhos e níveis.</p>
+            </div>
+            <div lang="en">
+                <h2 class="section-title">Corporate Plans</h2>
+                <p class="section-subtitle">Flexible solutions for teams of all sizes and levels.</p>
+            </div>
+
+            <div class="plans-grid">
+                <!-- Essencial -->
+                <div class="plan-card">
+                    <div class="plan-name">Essencial</div>
+                    <div lang="pt"><p style="color:var(--text-light);font-size:0.9rem;">Aprenda no Seu Ritmo</p></div>
+                    <div lang="en"><p style="color:var(--text-light);font-size:0.9rem;">Learn at Your Pace</p></div>
+                    <div class="plan-price">R$97<span>/mês</span></div>
+                    <div class="plan-period">
+                        <span lang="pt-inline">por aluno</span>
+                        <span lang="en-inline">per student</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><span lang="pt-inline">Tutor IA 24/7</span><span lang="en-inline">24/7 AI Tutor</span></li>
+                        <li><span lang="pt-inline">Exercícios semanais personalizados</span><span lang="en-inline">Personalized weekly exercises</span></li>
+                        <li><span lang="pt-inline">Correção de gramática e pronúncia</span><span lang="en-inline">Grammar & pronunciation correction</span></li>
+                        <li><span lang="pt-inline">Relatório mensal de progresso</span><span lang="en-inline">Monthly progress report</span></li>
+                    </ul>
+                    <a href="#contato" class="btn btn-primary" style="width:100%;">
+                        <span lang="pt-inline">Começar Agora</span>
+                        <span lang="en-inline">Get Started</span>
+                    </a>
+                </div>
+
+                <!-- Pro (Featured) -->
+                <div class="plan-card featured">
+                    <div class="plan-badge">
+                        <span lang="pt-inline">Mais Popular</span>
+                        <span lang="en-inline">Most Popular</span>
+                    </div>
+                    <div class="plan-name">Pro</div>
+                    <div lang="pt"><p style="color:var(--text-light);font-size:0.9rem;">Fale com Confiança</p></div>
+                    <div lang="en"><p style="color:var(--text-light);font-size:0.9rem;">Speak with Confidence</p></div>
+                    <div class="plan-price">R$497<span>/mês</span></div>
+                    <div class="plan-period">
+                        <span lang="pt-inline">por aluno (mín. 4)</span>
+                        <span lang="en-inline">per student (min. 4)</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><span lang="pt-inline">Tudo do Essencial +</span><span lang="en-inline">Everything in Essencial +</span></li>
+                        <li><span lang="pt-inline">Aulas em grupo 2x por semana</span><span lang="en-inline">Group classes 2x per week</span></li>
+                        <li><span lang="pt-inline">45min–1h com professor nativo cultural</span><span lang="en-inline">45min–1h with cultural native teacher</span></li>
+                        <li><span lang="pt-inline">Inglês para negócios e reuniões</span><span lang="en-inline">Business & meeting English</span></li>
+                        <li><span lang="pt-inline">Simulações de situações reais</span><span lang="en-inline">Real-world scenario simulations</span></li>
+                    </ul>
+                    <a href="#contato" class="btn btn-primary" style="width:100%;">
+                        <span lang="pt-inline">Agendar Avaliação</span>
+                        <span lang="en-inline">Schedule Assessment</span>
+                    </a>
+                </div>
+
+                <!-- VIP -->
+                <div class="plan-card">
+                    <div class="plan-name">VIP</div>
+                    <div lang="pt"><p style="color:var(--text-light);font-size:0.9rem;">Seu Professor Particular</p></div>
+                    <div lang="en"><p style="color:var(--text-light);font-size:0.9rem;">Your Private Teacher</p></div>
+                    <div class="plan-price">R$800<span>/mês</span></div>
+                    <div class="plan-period">
+                        <span lang="pt-inline">por aluno</span>
+                        <span lang="en-inline">per student</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><span lang="pt-inline">Tudo do Pro +</span><span lang="en-inline">Everything in Pro +</span></li>
+                        <li><span lang="pt-inline">Aulas individuais 1-on-1</span><span lang="en-inline">1-on-1 private classes</span></li>
+                        <li><span lang="pt-inline">Preparatório TOEFL</span><span lang="en-inline">TOEFL preparation</span></li>
+                        <li><span lang="pt-inline">Currículo 100% personalizado pela IA</span><span lang="en-inline">100% AI-personalized curriculum</span></li>
+                        <li><span lang="pt-inline">Suporte direto com o professor</span><span lang="en-inline">Direct teacher support</span></li>
+                    </ul>
+                    <a href="#contato" class="btn btn-primary" style="width:100%;">
+                        <span lang="pt-inline">Falar com André</span>
+                        <span lang="en-inline">Talk to André</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section id="processo">
+        <div class="container">
+            <div lang="pt">
+                <h2 class="section-title">Como Funciona</h2>
+                <p class="section-subtitle">Do primeiro contato à fluência da sua equipe em 4 passos simples.</p>
+            </div>
+            <div lang="en">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">From first contact to your team's fluency in 4 simple steps.</p>
+            </div>
+
+            <div class="process-grid">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3><span lang="pt-inline">Avaliação Gratuita</span><span lang="en-inline">Free Assessment</span></h3>
+                    <p><span lang="pt-inline">Avaliamos o nível de inglês de cada colaborador sem custo.</span><span lang="en-inline">We assess each employee's English level at no cost.</span></p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3><span lang="pt-inline">Plano Personalizado</span><span lang="en-inline">Custom Plan</span></h3>
+                    <p><span lang="pt-inline">Montamos turmas por nível e criamos um programa sob medida.</span><span lang="en-inline">We group by level and create a tailored program for your team.</span></p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3><span lang="pt-inline">Aulas + IA</span><span lang="en-inline">Classes + AI</span></h3>
+                    <p><span lang="pt-inline">Aulas ao vivo + prática diária com nosso tutor de IA personalizado.</span><span lang="en-inline">Live classes + daily practice with our personalized AI tutor.</span></p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3><span lang="pt-inline">Resultados</span><span lang="en-inline">Results</span></h3>
+                    <p><span lang="pt-inline">Relatórios mensais comprovando a evolução de cada aluno.</span><span lang="en-inline">Monthly reports proving each student's progress.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="about-section" id="sobre">
+        <div class="container">
+            <div class="about-content">
+                <div>
+                    <div style="text-align:center;">
+                        <img src="logo.jpg" alt="Raw English" style="height:120px;border-radius:14px;margin-bottom:20px;">
+                    </div>
+                    <div class="about-stats">
+                        <div class="about-stat">
+                            <div class="number">18+</div>
+                            <div class="label"><span lang="pt-inline">Anos nos EUA</span><span lang="en-inline">Years in the USA</span></div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="number">🎓</div>
+                            <div class="label"><span lang="pt-inline">Certificado TOEFL</span><span lang="en-inline">TOEFL Certified</span></div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="number">🏢</div>
+                            <div class="label"><span lang="pt-inline">Experiência Corporativa</span><span lang="en-inline">Corporate Experience</span></div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="number">🇧🇷</div>
+                            <div class="label"><span lang="pt-inline">Brasileiro, como Você</span><span lang="en-inline">Brazilian, Like You</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <div lang="pt">
+                        <h2>Conheça o André Raw</h2>
+                        <p>Com mais de 18 anos vivendo nos Estados Unidos, André não ensina inglês de livro — ele ensina o inglês que se fala no dia a dia, nas reuniões, nos negócios.</p>
+                        <p>Sendo brasileiro, ele entende exatamente as dificuldades que falantes de português enfrentam. Cada aula é uma imersão cultural que vai além da gramática.</p>
+                        <p>Agora, com inteligência artificial, cada aluno tem um tutor personalizado que pratica 24 horas por dia — acelerando resultados como nunca antes.</p>
+                    </div>
+                    <div lang="en">
+                        <h2>Meet André Raw</h2>
+                        <p>With over 18 years living in the United States, André doesn't teach textbook English — he teaches the English spoken in everyday life, in meetings, in business.</p>
+                        <p>As a Brazilian, he understands exactly the challenges Portuguese speakers face. Each class is a cultural immersion that goes beyond grammar.</p>
+                        <p>Now, with artificial intelligence, each student has a personalized tutor available 24/7 — accelerating results like never before.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contato">
+        <div class="container">
+            <div lang="pt">
+                <h2>Pronto para Capacitar sua Equipe?</h2>
+                <p>Agende uma avaliação gratuita e descubra o nível de inglês do seu time. Sem compromisso.</p>
+            </div>
+            <div lang="en">
+                <h2>Ready to Empower Your Team?</h2>
+                <p>Schedule a free assessment and discover your team's English level. No commitment.</p>
+            </div>
+            <a href="https://wa.me/5561998229223?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20o%20treinamento%20corporativo%20de%20ingl%C3%AAs." class="btn btn-white" target="_blank">
+                <span lang="pt-inline">📱 Falar no WhatsApp</span>
+                <span lang="en-inline">📱 Chat on WhatsApp</span>
+            </a>
+            <div style="margin-top:20px; display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+                <a href="mailto:rawandre@gmail.com" style="color:white;font-size:1rem;text-decoration:underline;">📧 rawandre@gmail.com</a>
+                <a href="https://instagram.com/rawenglishconsultant" target="_blank" style="color:white;font-size:1rem;text-decoration:underline;">📸 @rawenglishconsultant</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Raw English Consultant — <span lang="pt-inline">Todos os direitos reservados</span><span lang="en-inline">All rights reserved</span> | <a href="https://instagram.com/rawenglishconsultant" target="_blank">Instagram</a> | <a href="https://fb.com/RawEnglishConsultant" target="_blank">Facebook</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            if (lang === 'en') {
+                document.body.classList.add('en');
+                document.querySelector('.lang-btn:nth-child(2)').classList.add('active');
+            } else {
+                document.body.classList.remove('en');
+                document.querySelector('.lang-btn:nth-child(1)').classList.add('active');
+            }
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('mobileNav').classList.toggle('open');
+            document.getElementById('mobileNavOverlay').classList.toggle('show');
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

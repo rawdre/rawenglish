@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw English — Admin Panel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #1a3a5c; --accent: #7ec846; --blue: #2d7dd2; --bg: #f0f4f8; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; }
+
+        .login-screen {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #0f2840, #1a3a5c, #2d7dd2);
+        }
+        .login-card {
+            background: white; border-radius: 16px; padding: 40px; width: 380px;
+            max-width: 90vw; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .login-card h1 { font-size: 1.4rem; color: var(--primary); margin-bottom: 8px; }
+        .login-card p { color: #888; font-size: 0.85rem; margin-bottom: 25px; }
+        input, select {
+            width: 100%; padding: 12px 16px; border: 2px solid #e0e8f0; border-radius: 10px;
+            font-size: 1rem; font-family: inherit; outline: none; margin-bottom: 15px;
+        }
+        input:focus, select:focus { border-color: var(--accent); }
+        .btn {
+            padding: 12px 30px; border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+            cursor: pointer; border: none; font-family: inherit; transition: all 0.2s;
+        }
+        .btn-primary { background: var(--accent); color: white; width: 100%; }
+        .btn-primary:hover { background: #6ab838; }
+        .btn-danger { background: #e74c3c; color: white; padding: 6px 14px; font-size: 0.8rem; }
+        .btn-sm { padding: 6px 14px; font-size: 0.8rem; background: var(--blue); color: white; }
+        .btn-toggle { padding: 6px 14px; font-size: 0.8rem; }
+        .btn-toggle.active { background: var(--accent); color: white; }
+        .btn-toggle.inactive { background: #ffc107; color: #333; }
+
+        .error { color: #e74c3c; font-size: 0.85rem; margin-top: 8px; display: none; }
+
+        /* Admin dashboard */
+        .admin-screen { display: none; }
+        .admin-header {
+            background: var(--primary); color: white; padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .admin-header h1 { font-size: 1.2rem; }
+        .admin-header h1 span { color: var(--accent); }
+        .btn-logout-admin {
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+            border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit;
+        }
+
+        .admin-content { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+
+        .card {
+            background: white; border-radius: 14px; padding: 28px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06); margin-bottom: 24px;
+        }
+        .card h2 { font-size: 1.15rem; color: var(--primary); margin-bottom: 18px; }
+
+        .student-table { width: 100%; border-collapse: collapse; }
+        .student-table th {
+            text-align: left; padding: 10px 12px; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 1px; color: #888;
+            border-bottom: 2px solid #e0e8f0;
+        }
+        .student-table td {
+            padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem;
+        }
+        .code-badge {
+            background: #e8f5e9; color: #2e7d32; padding: 4px 10px;
+            border-radius: 6px; font-family: monospace; font-weight: 700; font-size: 0.85rem;
+        }
+        .level-badge {
+            padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+        }
+        .level-beginner { background: #e3f2fd; color: #1565c0; }
+        .level-intermediate { background: #fff3e0; color: #e65100; }
+        .level-advanced { background: #f3e5f5; color: #7b1fa2; }
+        .status-active { color: var(--accent); font-weight: 600; }
+        .status-inactive { color: #e74c3c; font-weight: 600; }
+
+        .add-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+        .add-form .form-group { margin-bottom: 0; }
+        .add-form label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,0.06); }
+        .stat-card .number { font-size: 2rem; font-weight: 800; color: var(--accent); }
+        .stat-card .label { font-size: 0.8rem; color: #888; margin-top: 4px; }
+
+        .copy-link {
+            display: flex; gap: 10px; align-items: center; background: #f5f5f5;
+            padding: 12px 16px; border-radius: 10px; margin-top: 12px;
+        }
+        .copy-link input {
+            flex: 1; margin-bottom: 0; background: white; font-size: 0.85rem;
+        }
+        .copy-link .btn { white-space: nowrap; }
+
+        .share-code {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            background: #f0f8e8; border-radius: 10px; margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .add-form { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .student-table { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Admin Login -->
+    <div class="login-screen" id="adminLogin">
+        <div class="login-card">
+            <h1>🔐 Admin Panel</h1>
+            <p>Painel do Professor / Teacher Dashboard</p>
+            <input type="password" id="adminPass" placeholder="Admin password" onkeypress="if(event.key==='Enter')adminLogin()">
+            <button class="btn btn-primary" onclick="adminLogin()">Entrar</button>
+            <p class="error" id="adminError">Senha incorreta</p>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-screen" id="adminScreen">
+        <div class="admin-header">
+            <h1>Raw<span>English</span> — Painel do Professor</h1>
+            <button class="btn-logout-admin" onclick="adminLogout()">Sair</button>
+        </div>
+
+        <div class="admin-content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number" id="totalStudents">0</div>
+                    <div class="label">Total de Alunos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="activeStudents">0</div>
+                    <div class="label">Ativos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="totalLevels">0</div>
+                    <div class="label">Níveis</div>
+                </div>
+            </div>
+
+            <!-- App Link -->
+            <div class="card">
+                <h2>🔗 Link do App</h2>
+                <p style="font-size:0.9rem; color:#666; margin-bottom:8px;">Envie este link para seus alunos:</p>
+                <div class="copy-link">
+                    <input type="text" value="https://raw-english-corporate.surge.sh/app/" readonly id="appLink">
+                    <button class="btn btn-sm" onclick="copyLink()">📋 Copiar</button>
+                </div>
+            </div>
+
+            <!-- Add Student -->
+            <div class="card">
+                <h2>➕ Adicionar Aluno</h2>
+                <div class="add-form">
+                    <div class="form-group">
+                        <label>Nível / Level</label>
+                        <select id="newLevel">
+                            <option value="beginner">Básico / Beginner</option>
+                            <option value="intermediate">Intermediário / Intermediate</option>
+                            <option value="advanced">Avançado / Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome (opcional)</label>
+                        <input type="text" id="newStudentName" placeholder="Ex: Maria Silva">
+                    </div>
+                    <button class="btn btn-primary" onclick="addStudent()" style="height:46px;">Adicionar</button>
+                </div>
+                <div id="newStudentResult" style="display:none;"></div>
+            </div>
+
+            <!-- Student List -->
+            <div class="card">
+                <h2>👥 Alunos Cadastrados</h2>
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nível</th>
+                            <th>Nome</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Quick Share -->
+            <div class="card">
+                <h2>📤 Mensagem Pronta para Enviar</h2>
+                <p style="font-size:0.9rem; color:#666; margin-bottom:10px;">Copie e envie para o aluno via WhatsApp:</p>
+                <select id="shareStudent" onchange="updateShareMessage()" style="margin-bottom:12px;">
+                    <option value="">Selecione o aluno...</option>
+                </select>
+                <textarea id="shareMessage" readonly style="width:100%; height:140px; padding:12px; border:2px solid #e0e8f0; border-radius:10px; font-family:inherit; font-size:0.88rem; resize:none; background:#fafafa;"></textarea>
+                <button class="btn btn-sm" onclick="copyShareMessage()" style="margin-top:10px;">📋 Copiar Mensagem</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Admin password - André can change this
+        const ADMIN_PASS = 'raw2026admin';
+
+        // Local storage key for student database
+        const DB_KEY = 'rawenglish_students_db';
+
+        // Default students
+        const DEFAULT_STUDENTS = {
+            'raw2026a': { level: 'beginner', levelLabel: 'Básico', name: 'Aluno 1', active: true, created: '2026-02-21' },
+            'raw2026b': { level: 'advanced', levelLabel: 'Avançado', name: 'Aluno 2', active: true, created: '2026-02-21' }
+        };
+
+        const LEVEL_LABELS = { beginner: 'Básico', intermediate: 'Intermediário', advanced: 'Avançado' };
+
+        function getDB() {
+            const saved = localStorage.getItem(DB_KEY);
+            if (saved) return JSON.parse(saved);
+            localStorage.setItem(DB_KEY, JSON.stringify(DEFAULT_STUDENTS));
+            return { ...DEFAULT_STUDENTS };
+        }
+
+        function saveDB(db) {
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            // Also update the shared student list in a cookie/localStorage that the main app reads
+            localStorage.setItem('rawenglish_student_codes', JSON.stringify(db));
+        }
+
+        function generateCode(level) {
+            const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+            const levelChar = level === 'beginner' ? 'b' : level === 'intermediate' ? 'i' : 'a';
+            let code = 'raw' + levelChar;
+            for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+            return code;
+        }
+
+        // ==================== AUTH ====================
+        function adminLogin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === ADMIN_PASS) {
+                localStorage.setItem('rawenglish_admin', 'true');
+                showAdmin();
+            } else {
+                document.getElementById('adminError').style.display = 'block';
+            }
+        }
+
+        function adminLogout() {
+            localStorage.removeItem('rawenglish_admin');
+            location.reload();
+        }
+
+        function showAdmin() {
+            document.getElementById('adminLogin').style.display = 'none';
+            document.getElementById('adminScreen').style.display = 'block';
+            renderStudents();
+        }
+
+        // ==================== STUDENTS ====================
+        function renderStudents() {
+            const db = getDB();
+            const tbody = document.getElementById('studentTableBody');
+            const shareSelect = document.getElementById('shareStudent');
+            tbody.innerHTML = '';
+            shareSelect.innerHTML = '<option value="">Selecione o aluno...</option>';
+
+            let total = 0, active = 0, levels = new Set();
+
+            Object.entries(db).forEach(([code, student]) => {
+                total++;
+                if (student.active) active++;
+                levels.add(student.level);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="code-badge">${code}</span></td>
+                    <td><span class="level-badge level-${student.level}">${student.levelLabel || LEVEL_LABELS[student.level]}</span></td>
+                    <td>${student.name || '—'}</td>
+                    <td><span class="${student.active ? 'status-active' : 'status-inactive'}">${student.active ? '✅ Ativo' : '❌ Inativo'}</span></td>
+                    <td>
+                        <button class="btn btn-toggle ${student.active ? 'active' : 'inactive'}" onclick="toggleStudent('${code}')">
+                            ${student.active ? '⏸ Pausar' : '▶ Ativar'}
+                        </button>
+                        <button class="btn btn-danger" onclick="removeStudent('${code}')">🗑</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                if (student.active) {
+                    const opt = document.createElement('option');
+                    opt.value = code;
+                    opt.textContent = `${student.name || code} (${student.levelLabel || student.level})`;
+                    shareSelect.appendChild(opt);
+                }
+            });
+
+            document.getElementById('totalStudents').textContent = total;
+            document.getElementById('activeStudents').textContent = active;
+            document.getElementById('totalLevels').textContent = levels.size;
+        }
+
+        function addStudent() {
+            const db = getDB();
+            const level = document.getElementById('newLevel').value;
+            const name = document.getElementById('newStudentName').value.trim();
+            const code = generateCode(level);
+
+            db[code] = {
+                level,
+                levelLabel: LEVEL_LABELS[level],
+                name: name || '',
+                active: true,
+                created: new Date().toISOString().split('T')[0]
+            };
+
+            saveDB(db);
+            renderStudents();
+
+            // Show the new code
+            const result = document.getElementById('newStudentResult');
+            result.style.display = 'block';
+            result.innerHTML = `
+                <div class="share-code">
+                    <span style="font-size:1.5rem;">🎉</span>
+                    <div>
+                        <strong>Aluno criado!</strong> Código de acesso: <span class="code-badge" style="font-size:1.1rem;">${code}</span>
+                        <button class="btn btn-sm" onclick="navigator.clipboard.writeText('${code}'); this.textContent='✅ Copiado!'" style="margin-left:8px;">📋 Copiar</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('newStudentName').value = '';
+        }
+
+        function toggleStudent(code) {
+            const db = getDB();
+            if (db[code]) {
+                db[code].active = !db[code].active;
+                saveDB(db);
+                renderStudents();
+            }
+        }
+
+        function removeStudent(code) {
+            if (!confirm(`Remover aluno com código "${code}"? Esta ação não pode ser desfeita.`)) return;
+            const db = getDB();
+            delete db[code];
+            saveDB(db);
+            renderStudents();
+        }
+
+        function updateShareMessage() {
+            const code = document.getElementById('shareStudent').value;
+            const db = getDB();
+            const student = db[code];
+            if (!student) { document.getElementById('shareMessage').value = ''; return; }
+
+            document.getElementById('shareMessage').value = 
+`🇧🇷🇺🇸 Raw English AI — Seu tutor de inglês!
+
+Olá${student.name ? ' ' + student.name.split(' ')[0] : ''}! 👋
+
+Seu acesso à plataforma de prática de inglês está pronto!
+
+📱 Abra este link no celular:
+👉 https://raw-english-corporate.surge.sh/app/
+
+🔑 Seu código de acesso: ${code}
+
+Para instalar como app no celular:
+📱 iPhone: Safari → ⬆️ Compartilhar → "Adicionar à Tela de Início"
+📱 Android: Chrome → ⋮ Menu → "Instalar app"
+
+Pratique todos os dias! Qualquer dúvida, me chama 💪
+— Professor André`;
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(document.getElementById('appLink').value);
+            event.target.textContent = '✅ Copiado!';
+            setTimeout(() => event.target.textContent = '📋 Copiar', 2000);
+        }
+
+        function copyShareMessage() {
+            navigator.clipboard.writeText(document.getElementById('shareMessage').value);
+            event.target.textContent = '✅ Copiado!';
+            setTimeout(() => event.target.textContent = '📋 Copiar Mensagem', 2000);
+        }
+
+        // ==================== INIT ====================
+        window.onload = function() {
+            if (localStorage.getItem('rawenglish_admin') === 'true') showAdmin();
+        };
+    </script>
+</body>
+</html>

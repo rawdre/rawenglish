@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1080px; height: 1080px; font-family: 'Inter', sans-serif; overflow: hidden; }
+.card {
+    width: 1080px; height: 1080px;
+    background: linear-gradient(135deg, #d4af37 0%, #b8941e 50%, #9a7b0a 100%);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 80px; position: relative;
+}
+.card::before {
+    content: ''; position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.emoji { font-size: 70px; margin-bottom: 30px; }
+h1 {
+    font-size: 54px; font-weight: 900; color: #0a1628; line-height: 1.15;
+    margin-bottom: 20px;
+}
+.subtitle {
+    font-size: 26px; color: rgba(10,22,40,0.7); line-height: 1.5;
+    margin-bottom: 40px; max-width: 700px;
+}
+.steps {
+    display: flex; gap: 30px; margin-bottom: 40px;
+}
+.step {
+    background: rgba(10,22,40,0.1); border-radius: 14px;
+    padding: 24px; width: 200px; text-align: center;
+}
+.step-num {
+    width: 40px; height: 40px; background: #0a1628; color: #d4af37;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 18px; margin: 0 auto 10px;
+}
+.step-title { font-size: 16px; font-weight: 800; color: #0a1628; }
+.step-desc { font-size: 13px; color: rgba(10,22,40,0.6); margin-top: 4px; }
+.cta {
+    background: #0a1628; color: #d4af37; padding: 18px 50px;
+    border-radius: 8px; font-weight: 800; font-size: 20px;
+    letter-spacing: 1px;
+}
+.brand {
+    position: absolute; bottom: 40px; color: rgba(10,22,40,0.3);
+    font-size: 16px; font-weight: 600; letter-spacing: 2px;
+}
+</style></head><body>
+<div class="card">
+    <div class="emoji">⚡</div>
+    <h1>GET FUNDED IN<br>3 EASY STEPS</h1>
+    <p class="subtitle">No paperwork headaches. No waiting weeks.<br>Your business deserves better.</p>
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-title">Apply Online</div>
+            <div class="step-desc">2-minute application</div>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-title">Get Options</div>
+            <div class="step-desc">Multiple offers in minutes</div>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-title">Get Funded</div>
+            <div class="step-desc">As fast as 24 hours</div>
+        </div>
+    </div>
+    <div class="cta">APPLY NOW — IT'S FREE</div>
+    <div class="brand">MONEY ON YOUR WAY | moneyonyourway.com</div>
+</div>
+</body></html>

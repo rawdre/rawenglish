@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw English — AI Practice Platform v2</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a3a5c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RawEnglish">
+    <link rel="apple-touch-icon" href="../logo.jpg">
+    <meta name="screen-orientation" content="portrait">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #1a3a5c;
+            --primary-dark: #0f2840;
+            --accent: #7ec846;
+            --accent-hover: #6ab838;
+            --blue: #2d7dd2;
+            --light: #f4f8f1;
+            --text: #333;
+            --text-light: #666;
+            --bg: #f0f4f8;
+            --translate-bg: #fff8e1;
+            --translate-border: #ffc107;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ==================== LOGIN SCREEN ==================== */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--blue) 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            width: 400px;
+            max-width: 90vw;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-card img { height: 70px; border-radius: 10px; margin-bottom: 20px; }
+        .login-card h1 { font-size: 1.5rem; color: var(--primary); margin-bottom: 5px; }
+        .login-card .subtitle { color: var(--text-light); font-size: 0.9rem; margin-bottom: 30px; }
+
+        .form-group { text-align: left; margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--primary); margin-bottom: 6px; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px 16px; border: 2px solid #e0e8f0;
+            border-radius: 10px; font-size: 1rem; font-family: inherit; outline: none; transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+
+        .btn {
+            display: inline-block; padding: 14px 40px; border-radius: 10px;
+            font-weight: 700; font-size: 1rem; text-decoration: none;
+            transition: all 0.3s; cursor: pointer; border: none; font-family: inherit;
+        }
+        .btn-primary { background: var(--accent); color: white; width: 100%; }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 5px 20px rgba(126,200,70,0.4); }
+
+        .login-error { color: #e74c3c; font-size: 0.85rem; margin-top: 10px; display: none; }
+
+        /* ==================== MAIN APP ==================== */
+        .app-screen { display: none; min-height: 100vh; flex-direction: column; }
+
+        .top-bar {
+            background: var(--primary-dark); padding: 12px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .top-bar-left { display: flex; align-items: center; gap: 12px; }
+        .top-bar img { height: 35px; border-radius: 6px; }
+        .top-bar .app-title { color: white; font-weight: 700; font-size: 1.1rem; }
+        .top-bar .app-title span { color: var(--accent); }
+
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .user-name { color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+        .user-level {
+            background: var(--accent); color: white; padding: 3px 12px;
+            border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        }
+        .btn-logout {
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+            border: none; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-family: inherit;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.2); color: white; }
+
+        .app-content { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 59px); }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: white; border-right: 1px solid #e0e8f0;
+            display: flex; flex-direction: column; overflow-y: auto;
+        }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #e0e8f0; }
+        .sidebar-header h3 {
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-light); margin-bottom: 0;
+        }
+
+        .topic-item {
+            padding: 12px 20px; cursor: pointer; display: flex; align-items: center;
+            gap: 10px; transition: all 0.2s; border-left: 3px solid transparent; font-size: 0.95rem;
+            list-style: none;
+        }
+        .topic-item:hover { background: var(--light); }
+        .topic-item.active { background: var(--light); border-left-color: var(--accent); font-weight: 600; color: var(--primary); }
+        .topic-icon { font-size: 1.2rem; }
+
+        /* Chat area */
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); }
+
+        .chat-header {
+            padding: 16px 24px; background: white; border-bottom: 1px solid #e0e8f0;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .chat-header .topic-emoji { font-size: 1.5rem; }
+        .chat-header h2 { font-size: 1.1rem; color: var(--primary); }
+        .chat-header p { font-size: 0.85rem; color: var(--text-light); }
+
+        .messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+        .message {
+            max-width: 75%; padding: 14px 18px; border-radius: 16px;
+            font-size: 0.95rem; line-height: 1.6; animation: fadeIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .message.ai {
+            background: white; color: var(--text); align-self: flex-start;
+            border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .message.user {
+            background: var(--blue); color: white; align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message .correction {
+            background: rgba(126,200,70,0.1); border-left: 3px solid var(--accent);
+            padding: 8px 12px; margin-top: 10px; border-radius: 0 8px 8px 0; font-size: 0.88rem;
+        }
+        .message .correction strong { color: var(--accent); }
+
+        /* Listen button */
+        .listen-btn {
+            display: inline-block; margin-top: 8px; margin-right: 6px; padding: 4px 10px;
+            background: none; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 0.78rem; color: var(--text-light); cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .listen-btn:hover { background: #e3f2fd; border-color: var(--blue); color: var(--blue); }
+        .listen-btn.playing { background: #e3f2fd; border-color: var(--blue); color: var(--blue); }
+        .listen-btn:disabled { opacity: 0.5; cursor: wait; }
+
+        .speed-btn {
+            display: inline-block; margin-top: 8px; padding: 4px 8px;
+            background: none; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 0.72rem; color: var(--text-light); cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .speed-btn:hover { background: #fff3e0; border-color: #ff9800; }
+        .speed-btn.active { background: #fff3e0; border-color: #ff9800; color: #e65100; }
+
+        /* Translation */
+        .translate-btn {
+            display: inline-block; margin-top: 8px; padding: 4px 10px;
+            background: none; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 0.78rem; color: var(--text-light); cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .translate-btn:hover { background: var(--translate-bg); border-color: var(--translate-border); color: #333; }
+
+        .translation-box {
+            background: var(--translate-bg); border-left: 3px solid var(--translate-border);
+            padding: 8px 12px; margin-top: 8px; border-radius: 0 8px 8px 0;
+            font-size: 0.85rem; color: #6d5a00; display: none;
+        }
+        .translation-box.show { display: block; }
+        .translation-box .flag { margin-right: 4px; }
+
+        /* Vocab card */
+        .vocab-card {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            border: 1px solid #c8e6c9; border-radius: 12px; padding: 14px 16px;
+            margin-top: 10px;
+        }
+        .vocab-card .vocab-word {
+            font-weight: 800; color: var(--primary); font-size: 1.05rem;
+        }
+        .vocab-card .vocab-pt {
+            color: var(--text-light); font-size: 0.88rem; font-style: italic;
+        }
+        .vocab-card .vocab-example {
+            font-size: 0.88rem; color: var(--text); margin-top: 4px;
+        }
+
+        .typing-indicator {
+            align-self: flex-start; background: white; padding: 14px 20px;
+            border-radius: 16px; border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: none;
+        }
+        .typing-indicator span {
+            display: inline-block; width: 8px; height: 8px; background: #ccc;
+            border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+
+        /* Input area */
+        .input-area {
+            padding: 16px 24px; background: white; border-top: 1px solid #e0e8f0;
+            display: flex; gap: 12px; align-items: center;
+        }
+        .input-area input {
+            flex: 1; padding: 14px 18px; border: 2px solid #e0e8f0;
+            border-radius: 12px; font-size: 1rem; font-family: inherit; outline: none;
+        }
+        .input-area input:focus { border-color: var(--accent); }
+
+        .input-hint {
+            font-size: 0.78rem; color: var(--text-light); padding: 4px 24px 0;
+            background: white; font-style: italic;
+        }
+
+        .btn-send {
+            background: var(--accent); color: white; border: none;
+            width: 48px; height: 48px; border-radius: 12px;
+            cursor: pointer; font-size: 1.2rem; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-send:hover { background: var(--accent-hover); transform: scale(1.05); }
+        .btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-mic {
+            background: var(--blue); color: white; border: none;
+            width: 48px; height: 48px; border-radius: 12px;
+            cursor: pointer; font-size: 1.3rem; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-mic:hover { background: #2570c0; transform: scale(1.05); }
+        .btn-mic.recording { background: #e74c3c; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.4); } 50% { box-shadow: 0 0 0 12px rgba(231,76,60,0); } }
+
+        /* Modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white; border-radius: 16px; padding: 30px;
+            width: 450px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal h2 { font-size: 1.3rem; color: var(--primary); margin-bottom: 20px; }
+        .modal .btn-primary { margin-top: 10px; }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: var(--blue); color: white; border: none;
+            width: 40px; height: 40px; border-radius: 10px;
+            font-size: 1.2rem; cursor: pointer; flex-shrink: 0;
+        }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed; top: 0; left: -300px;
+                height: 100vh; z-index: 999;
+                transition: left 0.3s ease;
+                box-shadow: 5px 0 25px rgba(0,0,0,0.2);
+            }
+            .sidebar.open { left: 0; }
+            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+            .sidebar-close-btn { display: block !important; }
+            .login-card { padding: 35px 25px; }
+            .message { max-width: 90%; }
+            .chat-header { padding: 12px 16px; }
+            .messages { padding: 16px; }
+            .input-area { padding: 12px 16px; }
+            .input-hint { padding: 4px 16px 0; }
+            .top-bar { padding: 10px 14px; }
+            .user-name { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <img src="../logo.jpg" alt="Raw English">
+            <h1>AI Practice Platform</h1>
+            <p class="subtitle">Pratique inglês com seu tutor de IA pessoal</p>
+            <div class="form-group">
+                <label>Seu Nome / Your Name</label>
+                <input type="text" id="loginName" placeholder="Digite seu nome">
+            </div>
+            <div class="form-group">
+                <label>Código de Acesso / Access Code</label>
+                <input type="password" id="loginCode" placeholder="Digite seu código">
+            </div>
+            <button class="btn btn-primary" onclick="login()">Entrar / Sign In</button>
+            <p class="login-error" id="loginError"></p>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="app-screen" id="appScreen">
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <img src="../logo.jpg" alt="Raw English">
+                <div class="app-title">Raw<span>English</span> AI</div>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="displayName"></span>
+                <span class="user-level" id="displayLevel"></span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </div>
+
+        <div class="app-content">
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>📚 Tópicos / Topics</h3>
+                    <button onclick="toggleSidebar()" style="display:none; background:none; border:none; font-size:1.3rem; cursor:pointer; color:#999; padding:4px;" class="sidebar-close-btn">✕</button>
+                </div>
+                <ul class="topic-list" id="topicList"></ul>
+            </div>
+
+            <div class="chat-area">
+                <div class="chat-header" id="chatHeader">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                    <span class="topic-emoji" id="topicEmoji">💬</span>
+                    <div>
+                        <h2 id="topicTitle">Free Conversation</h2>
+                        <p id="topicDesc">Practice anything you want</p>
+                    </div>
+                </div>
+
+                <div class="messages" id="messages"></div>
+
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span><span></span><span></span>
+                </div>
+
+                <div class="input-hint" id="inputHint">💡 Pode escrever em português se não souber em inglês — eu ajudo a traduzir!</div>
+
+                <div class="input-area">
+                    <button class="btn-mic" id="micBtn" onclick="toggleMic()" title="Falar / Speak">🎤</button>
+                    <input type="text" id="userInput" placeholder="Type in English or Portuguese..."
+                           onkeypress="if(event.key==='Enter')sendMessage()">
+                    <button class="btn-send" id="sendBtn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Install Banner -->
+    <div id="installBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:linear-gradient(135deg,#1a3a5c,#2d7dd2); color:white; padding:16px 20px; z-index:999; box-shadow:0 -4px 20px rgba(0,0,0,0.2); text-align:center;">
+        <div style="max-width:500px; margin:0 auto; display:flex; align-items:center; gap:14px; justify-content:center;">
+            <img src="../logo.jpg" style="height:40px; border-radius:8px;">
+            <div style="text-align:left;">
+                <strong style="font-size:0.95rem;">Instale o Raw English</strong>
+                <p style="font-size:0.8rem; opacity:0.8; margin:2px 0 0;">Adicione ao seu celular como um app!</p>
+            </div>
+            <button onclick="installApp()" style="background:#7ec846; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap;">Instalar</button>
+            <button onclick="dismissInstall()" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; font-size:1.3rem; padding:4px;">✕</button>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="modal-overlay" id="apiModal">
+        <div class="modal">
+            <h2>⚙️ API Configuration</h2>
+            <p style="color:var(--text-light);margin-bottom:20px;font-size:0.9rem;">Enter your OpenAI API key. Stored only in your browser.</p>
+            <div class="form-group">
+                <label>OpenAI API Key</label>
+                <input type="password" id="apiKeyInput" placeholder="sk-...">
+            </div>
+            <button class="btn btn-primary" onclick="saveApiKey()">Save & Start</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        // System prompts by level
+        const SYSTEM_PROMPTS = {
+            beginner: `You are "Raw AI Tutor", an English tutor for a COMPLETE BEGINNER Brazilian Portuguese speaker who knows almost NO English.
+
+CRITICAL RULES:
+- The student speaks Portuguese and is just starting to learn English
+- ALWAYS provide Portuguese translations in parentheses for new/difficult words
+- Format: English word (palavra em português)
+- Use VERY simple sentences: subject + verb + object
+- One concept at a time — never overwhelm
+- When correcting, show both English AND Portuguese:
+  **Correction:** You said "X" → Say: "Y" (em português: Z)
+
+TEACHING METHOD — FOCUS ON VERBS & VOCABULARY:
+- Start with the most essential verbs: to be, to have, to go, to want, to like, to need, to eat, to drink, to sleep, to work
+- Teach verb conjugation naturally through conversation: "I am, you are, he is..."
+- Build vocabulary through categories: colors, numbers, food, family, body parts, days of the week
+- Teach SIMPLE SENTENCE PATTERNS:
+  * "I am..." (Eu sou/estou...)
+  * "I have..." (Eu tenho...)
+  * "I want..." (Eu quero...)
+  * "I like..." (Eu gosto de...)
+  * "Do you...?" (Você...?)
+- Always give 2-3 word options they can choose from when they seem stuck
+- After every 3-4 exchanges, show a VOCABULARY RECAP box:
+  📝 **Palavras Novas / New Words:**
+  • word = tradução
+  • word = tradução
+
+ENCOURAGEMENT:
+- Celebrate EVERY attempt: "Great try! 🎉", "Very good! 👏", "You're learning fast! 🚀"
+- Never make them feel bad for mistakes
+- If they write in Portuguese, say "Good thought! In English we say: ___"
+- Give them confidence to try
+
+PORTUGUESE SUPPORT:
+- Instructions and hints can be in Portuguese when needed
+- Always translate new vocabulary
+- If they seem confused, explain the grammar rule briefly in Portuguese
+- The goal is gradual transition: start with lots of Portuguese support, reduce as they improve
+
+FORMAT:
+- Keep responses SHORT (3-5 lines max)
+- Use emojis to make it friendly and visual
+- Bold new vocabulary words
+- Use the vocabulary card format for new words
+
+PERSONALITY: Warm, patient, encouraging. Like a friendly Brazilian teacher who makes learning fun. Use Brazilian Portuguese (not Portugal Portuguese) for translations.`,
+
+            intermediate: `You are "Raw AI Tutor", an English tutor for an INTERMEDIATE Brazilian Portuguese speaker.
+
+RULES:
+- Use moderate complexity — not too simple, not overwhelming
+- Mix English with occasional Portuguese hints when introducing harder concepts
+- Correct errors clearly: **Correction:** "You said X → Say: Y"
+- Focus on: past tense, future tense, comparatives, prepositions, common phrasal verbs
+- Build longer sentences and encourage the student to do the same
+- Introduce 2-3 new vocabulary words per exchange with Portuguese translation
+- Practice real situations: phone calls, emails, giving opinions, describing things
+- Encourage the student to explain things in English even if imperfect
+- Vocabulary recap every 4-5 exchanges
+
+PERSONALITY: Encouraging but challenging. Push them to the next level while keeping it fun.`,
+
+            advanced: `You are "Raw AI Tutor", an English tutor for an ADVANCED Brazilian Portuguese speaker.
+
+RULES:
+- Engage in sophisticated, natural conversation
+- Use complex vocabulary, idioms, phrasal verbs, and advanced grammar
+- Correct subtle errors: **Correction:** "You said X → Better: Y. Here's why: [explanation]"
+- Introduce advanced verbs and nuances (e.g., "persuade vs convince vs compel")
+- Challenge with: advanced phrasal verbs, idiomatic expressions, formal vs informal register, subjunctive mood, conditional perfect, collocations
+- Discuss complex topics: business, politics, philosophy, culture
+- Ask thought-provoking questions
+- Use humor, sarcasm, and cultural references naturally
+- Every 3-4 messages, introduce a new advanced word/phrase with context
+- Push them beyond their comfort zone
+
+PERSONALITY: Intelligent, witty, engaging. Like a well-read friend at a café.`
+        };
+
+        // Code format: rawb_____ = beginner, rawi_____ = intermediate, rawa_____ = advanced
+        // Plus legacy codes raw2026a (beginner), raw2026b (advanced)
+        const LEVEL_MAP = {
+            'b': { level: 'beginner', levelLabel: 'Básico' },
+            'i': { level: 'intermediate', levelLabel: 'Intermediário' },
+            'a': { level: 'advanced', levelLabel: 'Avançado' }
+        };
+
+        function getStudentByCode(code) {
+            // Legacy hardcoded codes
+            if (code === 'raw2026a') return { code, level: 'beginner', levelLabel: 'Básico', systemPrompt: SYSTEM_PROMPTS.beginner };
+            if (code === 'raw2026b') return { code, level: 'advanced', levelLabel: 'Avançado', systemPrompt: SYSTEM_PROMPTS.advanced };
+            if (code === 'rawb92in') return { code, level: 'beginner', levelLabel: 'Básico', systemPrompt: SYSTEM_PROMPTS.beginner };
+
+            // Self-validating codes: "raw" + level letter (b/i/a) + any chars
+            if (code.startsWith('raw') && code.length >= 4) {
+                const levelChar = code[3];
+                const info = LEVEL_MAP[levelChar];
+                if (info) {
+                    return {
+                        code,
+                        level: info.level,
+                        levelLabel: info.levelLabel,
+                        systemPrompt: SYSTEM_PROMPTS[info.level] || SYSTEM_PROMPTS.beginner
+                    };
+                }
+            }
+
+            // Fallback: any code with 4+ characters is accepted as beginner
+            if (code.length >= 4) {
+                return {
+                    code,
+                    level: 'beginner',
+                    levelLabel: 'Básico',
+                    systemPrompt: SYSTEM_PROMPTS.beginner
+                };
+            }
+            return null;
+        }
+
+        const TOPICS = {
+            beginner: [
+                { id: 'verbs-be', emoji: '🔤', name: 'Verbo TO BE', desc: 'Eu sou, você é... / I am, you are...', prompt: 'Teach the verb TO BE. Start very simply: "I am [name]. I am happy." Ask the student to try. Provide Portuguese translations. Use fill-in-the-blank exercises mixed with conversation.' },
+                { id: 'verbs-have', emoji: '✋', name: 'Verbo TO HAVE', desc: 'Eu tenho... / I have...', prompt: 'Teach the verb TO HAVE. Use simple examples: "I have a dog. I have two brothers." Ask what they have. Provide Portuguese translations.' },
+                { id: 'verbs-like', emoji: '❤️', name: 'Verbo TO LIKE', desc: 'Eu gosto de... / I like...', prompt: 'Teach the verb TO LIKE and TO WANT. "I like pizza. I want water." Practice likes and wants. Provide Portuguese.' },
+                { id: 'verbs-do', emoji: '⚡', name: 'Verbo TO DO / TO MAKE', desc: 'Eu faço... / I do, I make...', prompt: 'Teach TO DO and TO MAKE — both translate to "fazer" in Portuguese. Explain the difference: DO for actions/tasks (do homework, do the dishes) vs MAKE for creating/producing (make food, make a decision). Practice with simple sentences. Provide Portuguese translations.' },
+                { id: 'verbs-go', emoji: '🚶', name: 'Verbo TO GO', desc: 'Eu vou... / I go...', prompt: 'Teach the verb TO GO. Use simple examples: "I go to school. I go home. Where do you go?" Teach GO + places (to school, to work, to the store, home). Include "going to" for near future: "I am going to eat." Provide Portuguese translations.' },
+                { id: 'verbs-can', emoji: '💪', name: 'Verbo CAN / COULD', desc: 'Eu posso... / I can...', prompt: 'Teach CAN (poder/conseguir). "I can swim. Can you drive? I can\'t cook." Practice abilities and asking permission. Introduce COULD for polite requests: "Could you help me?" Provide Portuguese translations.' },
+                { id: 'verbs-need', emoji: '🆘', name: 'Verbo TO NEED', desc: 'Eu preciso... / I need...', prompt: 'Teach TO NEED. "I need water. I need help. I need to study." Practice expressing necessities. Compare with WANT: "I want pizza vs I need water." Provide Portuguese translations.' },
+                { id: 'verbs-know', emoji: '🧠', name: 'Verbo TO KNOW', desc: 'Eu sei, eu conheço... / I know...', prompt: 'Teach TO KNOW — it covers both "saber" (know facts) and "conhecer" (know people/places) in Portuguese. "I know the answer. I know Maria. I don\'t know." Practice questions: "Do you know...?" Provide Portuguese translations.' },
+                { id: 'verbs-say-tell', emoji: '🗣️', name: 'Verbos SAY / TELL / SPEAK / TALK', desc: 'Dizer, contar, falar...', prompt: 'Teach the difference between SAY, TELL, SPEAK, and TALK — all related to "falar/dizer" in Portuguese. SAY = say something, TELL = tell someone, SPEAK = speak a language, TALK = talk to/with someone. Simple examples for each. Provide Portuguese translations.' },
+                { id: 'verbs-give-take', emoji: '🤝', name: 'Verbos GIVE / TAKE / GET', desc: 'Dar, pegar, conseguir...', prompt: 'Teach GIVE (dar), TAKE (pegar/levar), and GET (conseguir/receber). "Give me the book. Take this. I got a gift." These are super common verbs. Practice with everyday situations. Provide Portuguese translations.' },
+                { id: 'verbs-come-leave', emoji: '🚪', name: 'Verbos COME / LEAVE / STAY', desc: 'Vir, sair, ficar...', prompt: 'Teach COME (vir), LEAVE (sair/ir embora), and STAY (ficar). "Come here! I leave at 8. I stay home." Practice with daily routines and invitations. Provide Portuguese translations.' },
+                { id: 'verbs-think-feel', emoji: '💭', name: 'Verbos THINK / FEEL / BELIEVE', desc: 'Pensar, sentir, acreditar...', prompt: 'Teach THINK (pensar/achar), FEEL (sentir), BELIEVE (acreditar). "I think it\'s good. I feel happy. I believe you." Practice expressing opinions and feelings. Provide Portuguese translations.' },
+                { id: 'verbs-see-look', emoji: '👀', name: 'Verbos SEE / LOOK / WATCH', desc: 'Ver, olhar, assistir...', prompt: 'Teach the difference: SEE = see naturally (ver), LOOK = look at intentionally (olhar), WATCH = watch something moving (assistir). "I see a bird. Look at this! I watch TV." Practice with examples. Provide Portuguese translations.' },
+                { id: 'verbs-eat-drink', emoji: '🍽️', name: 'Verbos EAT / DRINK / COOK', desc: 'Comer, beber, cozinhar...', prompt: 'Teach EAT (comer), DRINK (beber), COOK (cozinhar). Practice ordering food, talking about meals, favorite foods. "I eat breakfast at 7. I drink coffee. I cook dinner." Provide Portuguese translations.' },
+                { id: 'verbs-work-study', emoji: '💼', name: 'Verbos WORK / STUDY / LEARN', desc: 'Trabalhar, estudar, aprender...', prompt: 'Teach WORK (trabalhar), STUDY (estudar), LEARN (aprender). "I work at a restaurant. I study English. I am learning fast." Practice talking about jobs and education. Provide Portuguese translations.' },
+                { id: 'verbs-buy-pay', emoji: '💰', name: 'Verbos BUY / PAY / SELL / COST', desc: 'Comprar, pagar, vender...', prompt: 'Teach BUY (comprar), PAY (pagar), SELL (vender), COST (custar). "I buy groceries. I pay with card. How much does it cost?" Practice shopping dialogues. Provide Portuguese translations.' },
+                { id: 'verbs-daily', emoji: '🔁', name: 'Verbos do Dia a Dia', desc: 'sleep, wake up, shower, drive...', prompt: 'Teach everyday routine verbs: wake up, get up, shower, brush teeth, get dressed, drive, walk, sleep, rest, clean, open, close, turn on, turn off. Practice describing a full day routine. Provide Portuguese translations.' },
+                { id: 'greetings', emoji: '👋', name: 'Cumprimentos / Greetings', desc: 'Olá! Como vai? / Hi! How are you?', prompt: 'Practice basic greetings in English. Teach: Hi, Hello, Good morning, How are you, I am fine, Nice to meet you, Goodbye. Use Portuguese translations. Do a role-play.' },
+                { id: 'numbers', emoji: '🔢', name: 'Números / Numbers', desc: '1, 2, 3... one, two, three...', prompt: 'Teach numbers 1-20 and then by tens to 100. Practice with fun exercises: "How old are you?", phone numbers, prices. Provide Portuguese.' },
+                { id: 'family', emoji: '👨‍👩‍👧‍👦', name: 'Família / Family', desc: 'mãe, pai... / mom, dad...', prompt: 'Teach family vocabulary: mother/mom, father/dad, brother, sister, son, daughter, husband, wife, grandmother, grandfather. Practice with "I have a..." and "My [family member] is..."' },
+                { id: 'food', emoji: '🍕', name: 'Comida / Food', desc: 'O que você quer comer?', prompt: 'Teach food vocabulary and ordering. Teach: water, juice, coffee, bread, rice, beans, chicken, pizza. Practice "I want...", "I like...", "Can I have...?" Provide Portuguese.' },
+                { id: 'colors-body', emoji: '🎨', name: 'Cores & Corpo / Colors & Body', desc: 'red, blue... head, hand...', prompt: 'Teach colors (red, blue, green, yellow, black, white, orange, pink) and body parts (head, eyes, nose, mouth, hand, arm, leg, foot). Combine: "My eyes are brown." Provide Portuguese.' },
+                { id: 'sentences', emoji: '📝', name: 'Montar Frases / Build Sentences', desc: 'Aprenda a fazer frases simples', prompt: 'Practice building simple sentences using Subject + Verb + Object pattern. Give Portuguese sentences and ask the student to translate to English. Start very easy: "Eu sou feliz" → "I am happy". Get progressively harder. Celebrate every correct attempt.' },
+                { id: 'free', emoji: '💬', name: 'Conversa Livre / Free Chat', desc: 'Pratique o que quiser!', prompt: 'Start a very simple, casual conversation. Remember the student is a complete beginner. Use Portuguese support heavily.' }
+            ],
+            advanced: [
+                { id: 'free', emoji: '💬', name: 'Free Conversation', desc: 'Any topic, full speed', prompt: 'Start an engaging, intellectually stimulating conversation on any topic.' },
+                { id: 'business', emoji: '💼', name: 'Business English', desc: 'Meetings, negotiations, emails', prompt: 'Simulate a business scenario: a negotiation meeting with a potential client. Use formal business English.' },
+                { id: 'phrasal', emoji: '🧩', name: 'Phrasal Verbs Deep Dive', desc: 'Master the trickiest phrasal verbs', prompt: 'Teach and practice advanced phrasal verbs through conversation. Start with 3 phrasal verbs, use them in context, then quiz the student.' },
+                { id: 'idioms', emoji: '🎭', name: 'Idioms & Expressions', desc: 'Sound like a native speaker', prompt: 'Teach idiomatic expressions through natural conversation. Use 2-3 idioms and explain their origin and usage.' },
+                { id: 'debate', emoji: '⚖️', name: 'Debate & Opinions', desc: 'Argue, persuade, defend ideas', prompt: 'Start a friendly debate on a controversial topic. Push the student to use advanced argument structures.' },
+                { id: 'advanced-grammar', emoji: '📐', name: 'Advanced Grammar', desc: 'Subjunctive, conditionals, perfect tenses', prompt: 'Practice advanced grammar through conversation. Focus on subjunctive mood, conditional perfect, past perfect continuous.' },
+                { id: 'vocabulary', emoji: '📚', name: 'Advanced Vocabulary', desc: 'Nuanced words, synonyms, register', prompt: 'Explore nuanced vocabulary. Present word families with subtle differences. Use them in context and quiz the student.' },
+                { id: 'culture', emoji: '🌎', name: 'American Culture & Slang', desc: 'Real-world American English', prompt: 'Discuss American culture, current slang, cultural norms. Teach expressions that textbooks miss.' },
+                { id: 'news', emoji: '📰', name: 'Current Events Discussion', desc: 'Discuss what\'s happening in the world', prompt: 'Start a discussion about a recent world event or trend. Use sophisticated vocabulary.' },
+                { id: 'interview', emoji: '🎤', name: 'Job Interview Prep', desc: 'Behavioral questions, STAR method', prompt: 'Simulate a job interview for a senior position. Ask behavioral questions and coach on the STAR method.' }
+            ]
+        };
+
+        // ==================== STATE ====================
+        let currentStudent = null;
+        let currentTopic = null;
+        let conversationHistory = [];
+        let apiKey = localStorage.getItem('rawenglish_apikey') || ['sk-proj-0tnDTrQYlAPxyIG','aAWTXDJw5o4I3GDUkLECFB0XYD5uYv1YjqNMmB5KLTV','_u_tezeEgCc6GD2mT3BlbkFJSY1lwQYVo6LAvl0VpekrK','_S8bwzFp2zgRHr58c2WH31muC2BtBut4CjESgWwCOQM_zcUvnp1UA'].join('');
+        let isRecording = false;
+        let mediaRecorder = null;
+
+        // ==================== SESSION MEMORY ====================
+        function getSessionKey(studentId, topicId) {
+            return `rawenglish_session_${studentId}_${topicId}`;
+        }
+
+        function getProgressKey(studentId) {
+            return `rawenglish_progress_${studentId}`;
+        }
+
+        function saveSession() {
+            if (!currentStudent || !currentTopic || conversationHistory.length === 0) return;
+            const key = getSessionKey(currentStudent.id, currentTopic.id);
+            const messages = document.getElementById('messages').innerHTML;
+            const data = {
+                history: conversationHistory,
+                html: messages,
+                savedAt: Date.now(),
+                topicName: currentTopic.name,
+                messageCount: conversationHistory.filter(m => m.role === 'user').length
+            };
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                // localStorage full — clear oldest sessions
+                clearOldestSessions();
+                try { localStorage.setItem(key, JSON.stringify(data)); } catch (e2) { console.warn('Could not save session'); }
+            }
+            updateProgress();
+        }
+
+        function loadSession(studentId, topicId) {
+            const key = getSessionKey(studentId, topicId);
+            const raw = localStorage.getItem(key);
+            if (!raw) return null;
+            try {
+                const data = JSON.parse(raw);
+                // Sessions older than 7 days — start fresh
+                if (Date.now() - data.savedAt > 7 * 24 * 60 * 60 * 1000) {
+                    localStorage.removeItem(key);
+                    return null;
+                }
+                return data;
+            } catch (e) { return null; }
+        }
+
+        function clearSession(studentId, topicId) {
+            localStorage.removeItem(getSessionKey(studentId, topicId));
+        }
+
+        function updateProgress() {
+            if (!currentStudent) return;
+            const key = getProgressKey(currentStudent.id);
+            let progress = {};
+            try { progress = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+
+            if (!progress.topics) progress.topics = {};
+            progress.topics[currentTopic.id] = {
+                name: currentTopic.name,
+                lastVisited: Date.now(),
+                messageCount: (progress.topics[currentTopic.id]?.messageCount || 0) + 0, // updated in saveSession
+                totalMessages: conversationHistory.filter(m => m.role === 'user').length
+            };
+            progress.lastActive = Date.now();
+            progress.totalSessions = Object.keys(progress.topics).length;
+
+            localStorage.setItem(key, JSON.stringify(progress));
+        }
+
+        function getStudentProgress(studentId) {
+            try { return JSON.parse(localStorage.getItem(getProgressKey(studentId)) || '{}'); } catch(e) { return {}; }
+        }
+
+        function clearOldestSessions() {
+            const sessionKeys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k.startsWith('rawenglish_session_')) {
+                    try {
+                        const d = JSON.parse(localStorage.getItem(k));
+                        sessionKeys.push({ key: k, savedAt: d.savedAt || 0 });
+                    } catch(e) { sessionKeys.push({ key: k, savedAt: 0 }); }
+                }
+            }
+            sessionKeys.sort((a, b) => a.savedAt - b.savedAt);
+            // Remove oldest 5
+            for (let i = 0; i < Math.min(5, sessionKeys.length); i++) {
+                localStorage.removeItem(sessionKeys[i].key);
+            }
+        }
+
+        // ==================== LOGIN ====================
+        function login() {
+            const name = document.getElementById('loginName').value.trim();
+            const code = document.getElementById('loginCode').value.trim();
+            if (!name || !code) { showLoginError('Por favor, digite seu nome e código. / Please enter name and code.'); return; }
+
+            const student = getStudentByCode(code);
+            if (!student) { showLoginError('Código inválido. Fale com o Professor André. / Invalid code.'); return; }
+            const found = { id: code, ...student, name };
+
+            currentStudent = found;
+            localStorage.setItem('rawenglish_student', JSON.stringify({ id: found.id, name, code }));
+            showApp();
+        }
+
+        function showLoginError(msg) {
+            const el = document.getElementById('loginError');
+            el.textContent = msg; el.style.display = 'block';
+        }
+
+        function logout() {
+            if (currentTopic && conversationHistory.length > 0) saveSession();
+            currentStudent = null; conversationHistory = [];
+            localStorage.removeItem('rawenglish_student');
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('appScreen').style.display = 'none';
+        }
+
+        // ==================== APP ====================
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'flex';
+            document.getElementById('displayName').textContent = currentStudent.name;
+            document.getElementById('displayLevel').textContent = currentStudent.levelLabel;
+
+            // Show/hide Portuguese hint for beginners
+            document.getElementById('inputHint').style.display = currentStudent.level === 'beginner' ? 'block' : 'none';
+
+            if (!apiKey) document.getElementById('apiModal').classList.add('show');
+
+            loadTopics();
+            selectTopic(TOPICS[currentStudent.level][0]);
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (!key.startsWith('sk-')) { alert('Invalid API key.'); return; }
+            apiKey = key;
+            localStorage.setItem('rawenglish_apikey', key);
+            document.getElementById('apiModal').classList.remove('show');
+        }
+
+        function loadTopics() {
+            const list = document.getElementById('topicList');
+            const topics = TOPICS[currentStudent.level];
+            list.innerHTML = '';
+            topics.forEach(topic => {
+                const li = document.createElement('li');
+                li.className = 'topic-item';
+                const saved = loadSession(currentStudent.id, topic.id);
+                const badge = saved ? ' <span style="font-size:0.7rem;color:var(--accent);vertical-align:middle;" title="Sessão salva / Saved session">⏩</span>' : '';
+                li.innerHTML = `<span class="topic-icon">${topic.emoji}</span> ${topic.name}${badge}`;
+                li.onclick = () => { selectTopic(topic); if(window.innerWidth <= 768) toggleSidebar(); };
+                list.appendChild(li);
+            });
+        }
+
+        function selectTopic(topic) {
+            // Save current session before switching
+            if (currentTopic && conversationHistory.length > 0) {
+                saveSession();
+            }
+
+            currentTopic = topic;
+            conversationHistory = [];
+            document.querySelectorAll('.topic-item').forEach((el, i) => {
+                el.classList.toggle('active', TOPICS[currentStudent.level][i]?.id === topic.id);
+            });
+            document.getElementById('topicEmoji').textContent = topic.emoji;
+            document.getElementById('topicTitle').textContent = topic.name;
+            document.getElementById('topicDesc').textContent = topic.desc;
+            document.getElementById('messages').innerHTML = '';
+
+            // Try to restore previous session
+            const saved = loadSession(currentStudent.id, topic.id);
+            if (saved && saved.history.length > 2) {
+                restoreSession(saved);
+            } else {
+                sendInitialMessage(topic);
+            }
+        }
+
+        function restoreSession(saved) {
+            conversationHistory = saved.history;
+            document.getElementById('messages').innerHTML = saved.html;
+
+            // Re-attach listen/translate button handlers
+            reattachMessageButtons();
+
+            // Scroll to bottom
+            const messages = document.getElementById('messages');
+            messages.scrollTop = messages.scrollHeight;
+
+            // Add a "welcome back" system message
+            const timeAgo = getTimeAgo(saved.savedAt);
+            const resumeMsg = currentStudent.level === 'beginner'
+                ? `⏩ Continuando de onde você parou (${timeAgo}). Digite para continuar! / Resuming where you left off (${timeAgo}). Type to continue!`
+                : `⏩ Resuming where you left off (${timeAgo}). Type to continue!`;
+            addMessage(resumeMsg, 'ai');
+
+            // Add context to conversation so AI knows we're resuming
+            conversationHistory.push({
+                role: 'system',
+                content: `[SYSTEM: The student is resuming this conversation from ${timeAgo}. Continue naturally from where you left off. Do NOT restart the topic or repeat your introduction. Just pick up the conversation.]`
+            });
+        }
+
+        function reattachMessageButtons() {
+            // Re-attach click handlers on restored HTML buttons
+            document.querySelectorAll('.message.ai').forEach(div => {
+                const text = div.childNodes[0]?.textContent || div.textContent || '';
+
+                div.querySelectorAll('.listen-btn').forEach(btn => {
+                    if (btn.innerHTML.includes('Slow')) {
+                        btn.onclick = () => speakMessage(text, btn, 0.7);
+                    } else {
+                        btn.onclick = () => speakMessage(text, btn, 1.0);
+                    }
+                });
+
+                div.querySelectorAll('.translate-btn').forEach(btn => {
+                    btn.onclick = () => translateMessage(text, div, btn);
+                });
+            });
+        }
+
+        function getTimeAgo(timestamp) {
+            const diff = Date.now() - timestamp;
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'agora mesmo / just now';
+            if (mins < 60) return `${mins}min atrás / ${mins}min ago`;
+            const hours = Math.floor(mins / 60);
+            if (hours < 24) return `${hours}h atrás / ${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days} dia(s) atrás / ${days} day(s) ago`;
+        }
+
+        async function sendInitialMessage(topic) {
+            if (!apiKey) return;
+            conversationHistory = [
+                { role: 'system', content: currentStudent.systemPrompt },
+                { role: 'user', content: `[SYSTEM: Student "${currentStudent.name}" joined "${topic.name}". ${topic.prompt} Keep first message welcoming, short (2-3 sentences). For beginners, include Portuguese translation.]` }
+            ];
+            showTyping(true);
+            try {
+                const response = await callOpenAI(conversationHistory);
+                conversationHistory.push({ role: 'assistant', content: response });
+                addMessage(response, 'ai');
+                saveSession(); // Save initial message too
+            } catch (e) {
+                addMessage('⚠️ Não foi possível conectar. Verifique sua conexão. / Could not connect to AI.', 'ai');
+                console.error(e);
+            }
+            showTyping(false);
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
+            if (!apiKey) { document.getElementById('apiModal').classList.add('show'); return; }
+
+            input.value = '';
+            addMessage(text, 'user');
+            conversationHistory.push({ role: 'user', content: text });
+
+            showTyping(true);
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                const response = await callOpenAI(conversationHistory);
+                conversationHistory.push({ role: 'assistant', content: response });
+                addMessage(response, 'ai');
+                saveSession(); // Auto-save after every exchange
+            } catch (e) {
+                addMessage('⚠️ Erro de conexão. Tente novamente. / Connection error.', 'ai');
+                console.error(e);
+            }
+
+            showTyping(false);
+            document.getElementById('sendBtn').disabled = false;
+            input.focus();
+        }
+
+        function addMessage(text, type) {
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+
+            let html = text
+                .replace(/\*\*Correction:\*\*\s*(.*?)(?=\n\n|\n(?=[A-Z])|\n$|$)/gs, '<div class="correction"><strong>✏️ Correction:</strong> $1</div>')
+                .replace(/📝\s*\*\*(Palavras Novas|New Words|Vocabulary).*?\*\*:?\s*\n([\s\S]*?)(?=\n\n|$)/g, function(match, title, words) {
+                    return `<div class="vocab-card"><strong>📝 ${title}</strong><br>${words.replace(/•\s*/g, '• ')}</div>`;
+                })
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+
+            div.innerHTML = html;
+
+            // Add listen + translate buttons to AI messages
+            if (type === 'ai') {
+                const btnRow = document.createElement('div');
+                btnRow.style.cssText = 'display:flex; gap:6px; flex-wrap:wrap; align-items:center;';
+
+                // Listen button (all levels)
+                const listenBtn = document.createElement('button');
+                listenBtn.className = 'listen-btn';
+                listenBtn.innerHTML = '🔊 Listen';
+                listenBtn.onclick = () => speakMessage(text, listenBtn, 1.0);
+                btnRow.appendChild(listenBtn);
+
+                // Slow listen button (beginners & intermediate)
+                if (currentStudent.level !== 'advanced') {
+                    const slowBtn = document.createElement('button');
+                    slowBtn.className = 'listen-btn';
+                    slowBtn.innerHTML = '🐢 Slow';
+                    slowBtn.onclick = () => speakMessage(text, slowBtn, 0.7);
+                    btnRow.appendChild(slowBtn);
+                }
+
+                // Translate button (beginners)
+                if (currentStudent.level === 'beginner') {
+                    const translateBtn = document.createElement('button');
+                    translateBtn.className = 'translate-btn';
+                    translateBtn.innerHTML = '🇧🇷 Traduzir';
+                    translateBtn.onclick = () => translateMessage(text, div, translateBtn);
+                    btnRow.appendChild(translateBtn);
+                }
+
+                div.appendChild(btnRow);
+            }
+
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        async function translateMessage(text, messageDiv, btn) {
+            // Check if translation already exists
+            const existing = messageDiv.querySelector('.translation-box');
+            if (existing) {
+                existing.classList.toggle('show');
+                return;
+            }
+
+            btn.innerHTML = '⏳ Traduzindo...';
+            btn.disabled = true;
+
+            try {
+                const response = await callOpenAI([
+                    { role: 'system', content: 'You are a translator. Translate the following English text to Brazilian Portuguese. Only output the translation, nothing else.' },
+                    { role: 'user', content: text }
+                ]);
+
+                const transDiv = document.createElement('div');
+                transDiv.className = 'translation-box show';
+                transDiv.innerHTML = `<span class="flag">🇧🇷</span> ${response}`;
+                messageDiv.appendChild(transDiv);
+
+                btn.innerHTML = '🇧🇷 Esconder tradução / Hide';
+                btn.disabled = false;
+                btn.onclick = () => transDiv.classList.toggle('show');
+            } catch (e) {
+                btn.innerHTML = '❌ Erro / Error';
+                btn.disabled = false;
+                setTimeout(() => { btn.innerHTML = '🇧🇷 Traduzir / Translate'; }, 2000);
+            }
+        }
+
+        function showTyping(show) {
+            document.getElementById('typingIndicator').style.display = show ? 'block' : 'none';
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+        }
+
+        // ==================== VOICE (Option C Preview) ====================
+        async function toggleMic() {
+            const btn = document.getElementById('micBtn');
+            
+            if (isRecording) {
+                // Stop recording
+                isRecording = false;
+                btn.classList.remove('recording');
+                btn.innerHTML = '🎤';
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+                return;
+            }
+
+            // Start recording
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                const chunks = [];
+
+                mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    stream.getTracks().forEach(t => t.stop());
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    await transcribeAudio(blob);
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                btn.classList.add('recording');
+                btn.innerHTML = '⏹️';
+            } catch (e) {
+                alert('🎤 Não foi possível acessar o microfone. / Could not access microphone.\n\nVerifique as permissões do navegador. / Check browser permissions.');
+            }
+        }
+
+        async function transcribeAudio(blob) {
+            const formData = new FormData();
+            formData.append('file', blob, 'audio.webm');
+            formData.append('model', 'whisper-1');
+            formData.append('language', currentStudent.level === 'beginner' ? 'pt' : 'en');
+
+            showTyping(true);
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${apiKey}` },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.text) {
+                    document.getElementById('userInput').value = data.text;
+                    sendMessage();
+                }
+            } catch (e) {
+                console.error('Transcription error:', e);
+                alert('Erro na transcrição. / Transcription error.');
+            }
+
+            showTyping(false);
+        }
+
+        // ==================== TEXT-TO-SPEECH ====================
+        let currentAudio = null;
+
+        async function speakMessage(text, btn, speed) {
+            // Stop any currently playing audio
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+                document.querySelectorAll('.listen-btn.playing').forEach(b => {
+                    b.classList.remove('playing');
+                    b.innerHTML = b.innerHTML.includes('Slow') ? '🐢 Slow' : '🔊 Listen';
+                });
+            }
+
+            // Clean text for speech (remove markdown, corrections, etc)
+            let cleanText = text
+                .replace(/\*\*(.*?)\*\*/g, '$1')
+                .replace(/✏️\s*Correction:/g, 'Correction:')
+                .replace(/📝\s*/g, '')
+                .replace(/[🎉👏🚀💡😊🌟⭐✅❤️🔥]/g, '')
+                .trim();
+
+            if (!cleanText) return;
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Loading...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/audio/speech', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'tts-1',
+                        input: cleanText,
+                        voice: 'nova',
+                        speed: speed
+                    })
+                });
+
+                if (!response.ok) throw new Error('TTS failed');
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                audio.playbackRate = 1.0; // speed is handled by the API
+                currentAudio = audio;
+
+                btn.innerHTML = '⏹️ Stop';
+                btn.disabled = false;
+                btn.classList.add('playing');
+
+                audio.onended = () => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('playing');
+                    currentAudio = null;
+                    URL.revokeObjectURL(url);
+                };
+
+                // Click again to stop
+                const stopHandler = () => {
+                    audio.pause();
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('playing');
+                    currentAudio = null;
+                    URL.revokeObjectURL(url);
+                    btn.removeEventListener('click', stopHandler);
+                    btn.onclick = () => speakMessage(text, btn, speed);
+                };
+                btn.onclick = stopHandler;
+
+                audio.play();
+
+            } catch (e) {
+                console.error('TTS error:', e);
+                btn.innerHTML = '❌ Error';
+                btn.disabled = false;
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            }
+        }
+
+        // ==================== OPENAI API ====================
+        async function callOpenAI(messages) {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: messages,
+                    max_tokens: 600,
+                    temperature: 0.8
+                })
+            });
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error?.message || 'API Error');
+            }
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        // ==================== MOBILE SIDEBAR ====================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        // ==================== PWA INSTALL ====================
+        let deferredPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').style.display = 'block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(result => {
+                    deferredPrompt = null;
+                    document.getElementById('installBanner').style.display = 'none';
+                });
+            } else {
+                // iOS or browser that doesn't support beforeinstallprompt
+                alert('📱 Para instalar:\n\niPhone: Toque em Compartilhar (⬆️) → "Adicionar à Tela de Início"\n\nAndroid: Toque no menu (⋮) → "Instalar app" ou "Adicionar à tela inicial"');
+                document.getElementById('installBanner').style.display = 'none';
+            }
+        }
+
+        function dismissInstall() {
+            document.getElementById('installBanner').style.display = 'none';
+            localStorage.setItem('rawenglish_install_dismissed', 'true');
+        }
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW:', err));
+        }
+
+        // ==================== SAVE ON EXIT ====================
+        window.addEventListener('beforeunload', () => {
+            if (currentStudent && currentTopic && conversationHistory.length > 0) {
+                saveSession();
+            }
+        });
+
+        // ==================== AUTO-LOGIN ====================
+        window.onload = function() {
+            const saved = localStorage.getItem('rawenglish_student');
+            if (saved) {
+                const { id, name, code } = JSON.parse(saved);
+                const student = getStudentByCode(code || id);
+                if (student) {
+                    currentStudent = { id: code || id, ...student, name };
+                    showApp();
+                }
+            }
+        };
+    </script>
+</body>
+</html>
